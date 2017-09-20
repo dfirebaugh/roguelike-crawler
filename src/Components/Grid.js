@@ -9,15 +9,22 @@ class Grid  extends React.Component{
 
     this.updateCellState = this.updateCellState.bind(this)
     this.handleCellClick = this.handleCellClick.bind(this)
+    this.updateAllCells = this.updateAllCells.bind(this)
     this.clear = this.clear.bind(this)
   }
+  componentDidMount(){
+    // console.log(this.props.map)
+    // this.updateAllCells()
+  }
   componentWillMount(){
+
     function Cell() {
-			// this.isAlive = Math.random() > .53;
+			this.isAlive = false;//Math.random() > .53;
 			this.neighbors = 0;
+      this.innerText = '';
 		}
-    let randRow = Math.floor(Math.random()* 10) + 1;
-    let randCol = Math.floor(Math.random()*20) + 1;
+    // let randRow = Math.floor(Math.random()* 10) + 1;
+    // let randCol = Math.floor(Math.random()*20) + 1;
     // console.log(randRow+ "," +randCol);
     // this.updateCellState(randRow, randCol)
     var grid = [];
@@ -29,6 +36,7 @@ class Grid  extends React.Component{
 			grid.push(row);
 		}
     this.setState({ grid: grid });
+    // console.log(grid)
   }
   clear(){
     for(var v = 0;v<this.props.height;v++){
@@ -39,54 +47,57 @@ class Grid  extends React.Component{
     }
     this.renderGrid()
   }
-  updateCellState(row,col){
+  updateCellState(row,col,bool){
     var cell = this.state.grid[row][col];
-    // (cell.isAlive ? cell.innerText = "" : cell.innerText = "▒")
+    var val = this.props.map[row][col];
+    if(val){
+      (bool ? cell.innerText = val : cell.innerText = "");
+      // console.log(val);
+    }
+    // (cell.isAlive ? cell.isAlive = false : cell.isAlive = true);
   }
   isWithinGrid(row, col) {
     return row >= 0 && row < this.props.width && col >= 0 && col < this.props.height;
   }
-  handleClickGen(){
-    // this.generate();
-  }
+  // handleClickGen(){
+  //   this.generate();
+  // }
   updateAllCells(){
-    // for(var x =0; x< this.props.size; x++){
-    //   for(var y=0;y<this.props.size*2;y++){
-    //     var cell = this.state.grid[x][y];
-    //     if(cell.isAlive){
-    //       if(cell.neighbors < 2){
-    //         cell.isAlive = false;
-    //       }
-    //       if(cell.neighbors > 3){
-    //         cell.isAlive = false;
-    //       }
-    //     }
-    //     else{
-    //       if(cell.neighbors === 3){
-    //         cell.isAlive = true;
-    //       }
-    //     }
-    //   }
-    // }
-  }
-  generate(){
-    // var gen = this.state.generation
-    // this.allCells();
-    // this.updateAllCells();
-    // this.setState({generation: gen+1})
-  }
-  handleClickPause(){
-    // (this.state.paused ? this.setState({paused: false}): this.setState({paused: true}))
-    //
-    // var loop = setInterval(function(){
-    //   if(this.state.paused){
-    //     clearInterval(loop)
-    //   }else{
-    //     this.generate()
-    //   }
-    //   }.bind(this),1)
+    for(var x =0; x< this.props.height; x++){
+      var row = []
+      for(var y=0;y<this.props.width;y++){
+        row.push(this.props.map[x])
+        // var cell = this.state.grid[x][y];
 
+        // on first render, the map prop is empty
+        // this checks if the map prop is populated
+        // this translates this.props.map array to the rendered board
+        if(this.props.map.length>0){
+          // if(this.props.map[x][y] !== '▒'){
+            this.updateCellState(x,y,true);
+          // }
+        }
+      }
+    }
   }
+  // generate(){
+  //   var gen = this.state.generation
+  //   this.allCells();
+  //   this.updateAllCells();
+  //   this.setState({generation: gen+1})
+  // }
+  // handleClickPause(){
+  //   (this.state.paused ? this.setState({paused: false}): this.setState({paused: true}))
+  //
+  //   var loop = setInterval(function(){
+  //     if(this.state.paused){
+  //       clearInterval(loop)
+  //     }else{
+  //       this.generate()
+  //     }
+  //     }.bind(this),1)
+  //
+  // }
   getNeighbors(row,col){
     // //gets the total of alive neighbors for a cell
     // var cell = this.state.grid[row][col];
@@ -113,17 +124,19 @@ class Grid  extends React.Component{
     //     }
     //   }
     }
-
+;
   renderGrid(){
-    //this changes the state so that the grid rerenders
-
+    //this changes the state so that the grid rerenders -- there is probably a better way to do this
     if(this.state.toggle ? this.setState({toggle:true}) : this.setState({toggle:false}));
   }
   handleCellClick(row,col){
-    // console.log("cellClicked: " + row + "," + col)
-    this.updateCellState(row,col);
+    console.log("cellClicked: " + row + "," + col);
+    console.log(this.state.grid[row][col]);
+    (this.state.grid[row][col].innerText === '▒' ? this.updateCellState(row,col,false) : this.updateCellState(row,col,true));
+    this.renderGrid();
   }
   render(){
+    this.updateAllCells()
 
     document.body.style.background = "#333";
 		document.body.style.color = "#FAFAFA";
@@ -149,7 +162,7 @@ class Grid  extends React.Component{
 			var row = [];
 			for (var j = 0; j < this.props.width; j++) {
 				var cell = this.state.grid[i][j];
-				row.push(<Cell key={i + "," + j} isAlive={cell.isAlive} row={i} col={j} parentMethod={this.handleCellClick} />);
+				row.push(<Cell key={i + "," + j} isAlive={cell.isAlive} innerText={cell.innerText} row={i} col={j} parentMethod={this.handleCellClick} />);
 			}
 			cells.push(<div  key={i+","+j} style={rowStyle}>{row}</div>);
 		}
