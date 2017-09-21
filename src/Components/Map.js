@@ -2,10 +2,10 @@ import React from 'react';
 import Grid from './Grid.js';
 import generate from './generate.js';
 
-const GRID_HEIGHT = 15;
-const GRID_WIDTH = 15;
+const GRID_HEIGHT = 25;
+const GRID_WIDTH = 35;
 const MAX_ROOMS = 5;
-const ROOM_SIZE_RANGE = [4,8];
+const ROOM_SIZE_RANGE = [6,24];
 
 const c = {GRID_HEIGHT, GRID_WIDTH, MAX_ROOMS, ROOM_SIZE_RANGE}
 // const[min,max] = c.ROOM_SIZE_RANGE;
@@ -29,11 +29,8 @@ class Map extends React.Component{
 		for(var x = 0;x< GRID_HEIGHT;x++){
 	    var row = []
 	    for(var y = 0; y<GRID_WIDTH; y++){
-				if(x===12){
-					row.push("▒");
-				}
-				if(y===1){
-					row.push('0');
+				if(arr){
+					row.push(arr[x][y])
 				}
 	    }
 	    level.push(row);

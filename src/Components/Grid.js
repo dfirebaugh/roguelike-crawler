@@ -130,7 +130,7 @@ class Grid  extends React.Component{
     if(this.state.toggle ? this.setState({toggle:true}) : this.setState({toggle:false}));
   }
   handleCellClick(row,col){
-    console.log("cellClicked: " + row + "," + col);
+    // console.log("cellClicked: " + row + "," + col);
     console.log(this.state.grid[row][col]);
     (this.state.grid[row][col].innerText === '▒' ? this.updateCellState(row,col,false) : this.updateCellState(row,col,true));
     this.renderGrid();

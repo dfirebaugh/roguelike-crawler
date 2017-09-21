@@ -21,10 +21,10 @@ class Cell extends React.Component{
   render(){
     var cellStyle = {
       width: 12,
-			height: 20,
+			height: 12,
 			dislay: "inline-block",
 			float: "left",
-			// border: ".5px solid #000",
+			border: ".5px solid #000",
 			background: /*this.state.isAlive ? "#FFF" :*/ "#333"
     }
 //shows the cell number when placed inside of div
