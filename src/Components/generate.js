@@ -1,8 +1,7 @@
 
-
 function generate(gh,gw,maxR,rSize){
   var arr = []
-  // //blank out array
+  //blank out array
   for(var x = 0; x<gw;x++){
     var row = [];
     for(var y = 0; y<gh;y++){
@@ -21,15 +20,7 @@ function generate(gh,gw,maxR,rSize){
 }
 
 function populate(arr,room,gh,gw){
-  if(arr.length<1){
-    for(var w = 0;w< gh;w++){
-      var row = []
-      for(var v = 0; v<gw; v++){
-        row.push('');
-      }
-      arr.push(row);
-    }
-  }
+
   for(var x = 0;x< gh;x++){
     for(var y = 0; y<gw; y++){
       if(room[x][y] === '▒'){
@@ -55,13 +46,20 @@ function randRoom(gh,gw,rSize,arr){
         collisionBool = true;
         console.log('cell already populated');
       }
+      if(X1>= 0 && X1 < gw && Y1 >= 0 && Y1 < gh){
+      }else{
+        console.log('out of bounds')
+        collisionBool = true;
+      }
     }
 
     console.log('startX: ' + coords[0].x + "startY: " + coords[0].y)
 
     // read room object and populate the array with the walls
-    // console.log(room)
+    // if rooms collides, i want a new room
+    // if room is outside of bounds, I want a new room
     if(collisionBool){
+      //currently it's just not writing room to arr
       return arr;
     }else{
       for(var i = 0;i<coords.length;i++){
