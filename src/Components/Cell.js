@@ -14,8 +14,8 @@ class Cell extends React.Component{
     this.setState({isAlive:nextProps.isAlive});
   }
   handleClick(){
-    // (this.state.innerText === "" ? this.setState({innerText:"▒", isWall: true}): this.setState({innerText:"", isWall: false}))
-    this.props.parentMethod(this.props.row, this.props.col);
+    // (this.state.innerText === "" ? this.setState({innerText:"▒"}): this.setState({innerText:""}))
+    this.props.parentMethod(this.props.row, this.props.col);    
     // console.log(this.props.innerText)
   }
   render(){

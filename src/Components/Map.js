@@ -4,7 +4,7 @@ import generate from './generate.js';
 
 const GRID_HEIGHT = 25;
 const GRID_WIDTH = 35;
-const MAX_ROOMS = 5;
+const MAX_ROOMS = 12;
 const ROOM_SIZE_RANGE = [6,24];
 
 const c = {GRID_HEIGHT, GRID_WIDTH, MAX_ROOMS, ROOM_SIZE_RANGE}
