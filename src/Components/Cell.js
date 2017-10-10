@@ -15,7 +15,7 @@ class Cell extends React.Component{
   }
   handleClick(){
     // (this.state.innerText === "" ? this.setState({innerText:"▒"}): this.setState({innerText:""}))
-    this.props.parentMethod(this.props.row, this.props.col);    
+    this.props.parentMethod(this.props.row, this.props.col);
     // console.log(this.props.innerText)
   }
   render(){
@@ -24,7 +24,7 @@ class Cell extends React.Component{
 			height: 12,
 			dislay: "inline-block",
 			float: "left",
-			border: ".5px solid #000",
+			// border: ".5px solid #000",
 			background: /*this.state.isAlive ? "#FFF" :*/ "#333"
     }
 //shows the cell number when placed inside of div
