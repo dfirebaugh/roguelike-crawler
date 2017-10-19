@@ -1,6 +1,8 @@
 import React from 'react';
 import Grid from './Grid.js';
 import generate from './generate.js';
+import Enemies from './Enemies.js';
+import Items from './Items.js';
 
 const GRID_HEIGHT = 25;
 const GRID_WIDTH = 35;
@@ -21,6 +23,8 @@ class Map extends React.Component{
 	}
 	componentDidMount(){
 		var arr = generate(GRID_HEIGHT,GRID_WIDTH,MAX_ROOMS,ROOM_SIZE_RANGE);
+		var enemies = Enemies(arr,GRID_WIDTH,GRID_HEIGHT)
+		var items = Items(arr,GRID_WIDTH,GRID_HEIGHT)
 		this.updateLevel(arr);
 		// console.log(arr)
 	}

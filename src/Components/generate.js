@@ -1,3 +1,7 @@
+/*
+*    Generates a random Dungeon map -- returns it as an array
+*/
+
 
 function generate(gh,gw,maxR,rSize){
   var arr = []
@@ -77,7 +81,7 @@ function agent(arr,gw,gh){
 
     }
     if(goodDir){
-      console.log('curPos' + curPos)
+      // console.log('curPos' + curPos)
     }
     function getDirection(){
       count++;
@@ -119,8 +123,8 @@ function agent(arr,gw,gh){
 
   function largestCell(){
     var largest;
-    for(var x = 0;x < arr.length;x++){
-      for(var y = 0; y < arr.length;y++){
+    for(var x = 0;x < gh;x++){
+      for(var y = 0; y < gw;y++){
         if(arr[x][y] === ''){
           largest = [x,y]
         }
@@ -215,7 +219,7 @@ function randRoom(gh,gw,rSize,arr){
 
       if(arr[Y1][X1]){
         collisionBool = true;
-        console.log('cell already populated');
+        // console.log('cell already populated');
       }else{
         collisionBool = false;
       }
@@ -223,7 +227,7 @@ function randRoom(gh,gw,rSize,arr){
       if(X1>= 0 && X1 < gw && Y1 >= 0 && Y1 < gh){
         collisionBool = false;
       }else{
-        console.log('out of bounds')
+        // console.log('out of bounds')
         collisionBool = true;
       }
     }
