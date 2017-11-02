@@ -15,29 +15,41 @@ class App extends Component {
       if(e.key === "ArrowDown"||e.key === "ArrowUp"||e.key === "ArrowLeft"||e.key === "ArrowRight"){
         this.setState({playerDirection:e.key});
       }
+      var newY = this.state.nY;
+      var newX = this.state.nX;
+      var l = this.state.map.length;
+      var h = this.state.map[0].length;
 
-      if(e.key === "ArrowDown"){
-        if(this.state.map[this.state.nY+1][this.state.nX] !== '▒'){
-          this.setState({nY:this.state.nY+1});
-        }
-      }
-
-      if(e.key === "ArrowUp"){
-        if(this.state.map[this.state.nY-1][this.state.nX] !== '▒'){
-          this.setState({nY:this.state.nY-1});
-        }
-      }
-      if(e.key === "ArrowLeft"){
-        if(this.state.map[this.state.nY][this.state.nX-1] !== '▒'){
-          this.setState({nX:this.state.nX-1})
-        }
-      }
-      if(e.key === "ArrowRight"){
-        if(this.state.map[this.state.nY][this.state.nX+1] !== '▒'){
-          this.setState({nX:this.state.nX+1});
+      if(e.key === "ArrowDown" && isWithinGrid(newX,newY+1)){
+        // if(this.state.map[this.state.nY+1][this.state.nX] !== '▒' ){
+        if(this.state.map[newY+1][newX] !== '▒'){
+          console.log(isWithinGrid(newX,newY+1))
+          newY+=1;
         }
       }
 
+      if(e.key === "ArrowUp" &&  isWithinGrid(newX,newY-1)){
+        if(this.state.map[newY-1][newX] !== '▒'){
+          newY-=1;
+        }
+      }
+      if(e.key === "ArrowLeft" && isWithinGrid(newX-1,newY)){
+        if(this.state.map[newY][newX-1] !== '▒'){
+          newX-=1;
+        }
+      }
+      if(e.key === "ArrowRight" && isWithinGrid(newX+1,newY)){
+        if(this.state.map[newY][newX+1] !== '▒'){
+          newX+=1;
+        }
+      }
+
+      this.setState({nX:newX})
+      this.setState({nY:newY})
+
+      function isWithinGrid(x,y){
+        return y >= 0 && y < l && x >= 0 && x < h;
+      }
 
 
 		})
