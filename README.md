@@ -4,5 +4,5 @@ this is the very early stages of my roguelike game
 
 This project was bootstrapped with create-react-app
 
-To work on this project, download the repository and run `npm install` then `npm run`
+To work on this project, download the repository and run `npm install` then `npm start`
 webserver will run on localhost:3000/
