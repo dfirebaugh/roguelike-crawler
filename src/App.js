@@ -6,31 +6,26 @@ import Map from './Components/Map.js';
 class App extends Component {
   constructor(props){
 		super(props)
-		this.state = {playerDirection:"!", pX:16,pY:0}
+		this.state = {playerDirection:"!", nX:16,nY:0, playerPos:[16,0]}
   }
   componentDidMount(){
     document.body.addEventListener('keydown', (e) => {
 
       if(e.key === "ArrowDown"||e.key === "ArrowUp"||e.key === "ArrowLeft"||e.key === "ArrowRight"){
         this.setState({playerDirection:e.key});
-        // this.forceUpdate();
       }
 
       if(e.key === "ArrowDown"){
-        this.setState({pY:this.state.pY+1});
-        // this.setState({pX:this.state.pX});
+        this.setState({nY:this.state.nY+1});
       }
       if(e.key === "ArrowUp"){
-        this.setState({pY:this.state.pY-1});
-        // this.setState({pX:this.state.pX});
+        this.setState({nY:this.state.nY-1});
   		}
   		if(e.key === "ArrowLeft"){
-        // this.setState({pX:this.state.pY});
-        this.setState({pX:this.state.pX-1})
+        this.setState({nX:this.state.nX-1})
         }
   		if(e.key === "ArrowRight"){
-        this.setState({pX:this.state.pX+1});
-        // this.setState({pX:this.state.pY});
+        this.setState({nX:this.state.nX+1});
       }
 
 		})
@@ -45,7 +40,7 @@ class App extends Component {
         <p className="App-intro">
 
         </p>
-        <Map playerDirection={this.state.playerDirection} pX={this.state.pX} pY={this.state.pY} />
+        <Map playerDirection={this.state.playerDirection} nX={this.state.nX} nY={this.state.nY} playerPos = {this.state.playerPos}/>
       </div>
     );
   }

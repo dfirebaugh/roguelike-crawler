@@ -3,6 +3,7 @@ import Grid from './Grid.js';
 import generate from './generate.js';
 import Enemies from './Enemies.js';
 import Items from './Items.js';
+import update from 'react-addons-update';
 
 
 const GRID_HEIGHT = 25;
@@ -11,17 +12,11 @@ const MAX_ROOMS = 24;
 const ROOM_SIZE_RANGE = [6,24];
 
 const c = {GRID_HEIGHT, GRID_WIDTH, MAX_ROOMS, ROOM_SIZE_RANGE}
-// const[min,max] = c.ROOM_SIZE_RANGE;
-
-
 
 class Map extends React.Component{
 	constructor(props){
 		super(props)
-		this.state = {curLevel:[],playerDirection:this.props.playerDirection,pH:100,pAtt:10}
-
-		this.updateLevel = this.updateLevel.bind(this);
-		// this.movePlayer = this.movePlayer.bind(this);
+		this.state = {curLevel:[],playerDirection:this.props.playerDirection,pX:16,pY:0,pH:100,pAtt:10}
 	}
 	componentDidMount(){
 		var arr = generate(GRID_HEIGHT,GRID_WIDTH,MAX_ROOMS,ROOM_SIZE_RANGE);
@@ -31,16 +26,11 @@ class Map extends React.Component{
 		this.updateLevel(arr);
 	}
 	componentWillReceiveProps(newProps){
-		console.log(newProps)
 		this.setState({playerDirection:newProps.playerDirection});
-
-		// if(this.state.curLevel[newProps.pY][newProps.pX] !== '▒'){
-			this.movePlayer(newProps);
-		// }
-	}
+		this.movePlayer(newProps);
+		}
 	updateLevel(arr){
-		var level = this.state.curLevel.slice()
-		// arr[this.state.pY][this.state.pX] = "P";
+		var level = this.state.curLevel.slice();
 		arr[0][16] = 'P';
 
 		for(var x = 0;x< GRID_HEIGHT;x++){
@@ -55,11 +45,20 @@ class Map extends React.Component{
 		this.setState({curLevel:arr});
 	}
 	movePlayer(newProps){
-		// update player position
-		// this.state.curLevel[this.state.pY][this.state.pX] = "P";
-		// this.state.curLevel[this.state.pY][this.state.pX] = '';
+		var b = this.state.pX;
+		var a = this.state.pY;
+		this.setState({pX:newProps.nX});
+		this.setState({pY:newProps.nY});
 
-		this.state.curLevel[newProps.pY][newProps.pX] = 'P';
+		var levelArr = this.state.curLevel.slice();
+		levelArr[newProps.nY][newProps.nX] = 'P';
+		this.setState({curLevel:levelArr});
+		this.cleanCell(a,b)
+	}
+	cleanCell(a,b){
+		var levelArr = this.state.curLevel.slice();
+		levelArr[a][b] = ' ';
+		this.setState({curLevel:levelArr});
 	}
 	render(){
 		return(
