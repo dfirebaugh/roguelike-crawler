@@ -1,5 +1,6 @@
 import React from 'react';
 import Cell from './Cell.js';
+import Torch from './Torch.js';
 
 
 class Grid  extends React.Component{
@@ -12,10 +13,6 @@ class Grid  extends React.Component{
     this.updateAllCells = this.updateAllCells.bind(this)
     this.clear = this.clear.bind(this)
   }
-  componentDidMount(){
-    // console.log(this.props.map)
-    // this.updateAllCells()
-  }
   componentWillMount(){
 
     function Cell() {
@@ -23,10 +20,7 @@ class Grid  extends React.Component{
 			this.neighbors = 0;
       this.innerText = '';
 		}
-    // let randRow = Math.floor(Math.random()* 10) + 1;
-    // let randCol = Math.floor(Math.random()*20) + 1;
-    // console.log(randRow+ "," +randCol);
-    // this.updateCellState(randRow, randCol)
+
     var grid = [];
 		for (var i = 0; i < this.props.height; i++) {
 			var row = [];
@@ -49,9 +43,9 @@ class Grid  extends React.Component{
   }
   updateCellState(row,col,bool){
     var cell = this.state.grid[row][col];
-    var val = this.props.map[row][col];
+    var val = this.props.level[row][col];
     if(val){
-      (bool ? cell.innerText = val : cell.innerText = "");
+      (bool ? cell.innerText = val.show : cell.innerText = "");
       // console.log(val);
     }
     // (cell.isAlive ? cell.isAlive = false : cell.isAlive = true);
@@ -66,65 +60,19 @@ class Grid  extends React.Component{
     for(var x =0; x< this.props.height; x++){
       var row = []
       for(var y=0;y<this.props.width;y++){
-        row.push(this.props.map[x])
+        row.push(this.props.level[x])
         // var cell = this.state.grid[x][y];
 
         // on first render, the map prop is empty
         // this checks if the map prop is populated
         // this translates this.props.map array to the rendered board
-        if(this.props.map.length>0){
-          // if(this.props.map[x][y] !== '▒'){
-            this.updateCellState(x,y,true);
-          // }
+        if(this.props.level.length>0){
+          this.updateCellState(x,y,true);
         }
       }
     }
   }
-  // generate(){
-  //   var gen = this.state.generation
-  //   this.allCells();
-  //   this.updateAllCells();
-  //   this.setState({generation: gen+1})
-  // }
-  // handleClickPause(){
-  //   (this.state.paused ? this.setState({paused: false}): this.setState({paused: true}))
-  //
-  //   var loop = setInterval(function(){
-  //     if(this.state.paused){
-  //       clearInterval(loop)
-  //     }else{
-  //       this.generate()
-  //     }
-  //     }.bind(this),1)
-  //
-  // }
-  getNeighbors(row,col){
-    // //gets the total of alive neighbors for a cell
-    // var cell = this.state.grid[row][col];
-    // cell.neighbors = 0;
-    // for(var x = 0; x<this.state.neighborCells.length; x++){
-    //   var position = this.state.neighborCells[x]
-    //   var r = row+position[0];
-    //   var c = col+position[1];
-    //   if(this.isWithinGrid(r,c)){
-    //     if(this.state.grid[r][c].isAlive){
-    //       cell.neighbors++;
-    //     }
-    //   }
-    // }
-    //
-    // return cell.neighbors
-  }
-  allCells(){
-    // //cycles through the grid
-    // for(var v = 0;v<this.props.size;v++){
-    //   for(var w = 0; w<this.props.size*2;w++){
-    //     var cell = this.state.grid[v][w];
-    //     cell.neighbors = this.getNeighbors(v,w)
-    //     }
-    //   }
-    }
-;
+
   renderGrid(){
     //this changes the state so that the grid rerenders -- there is probably a better way to do this
     if(this.state.toggle ? this.setState({toggle:true}) : this.setState({toggle:false}));
@@ -145,7 +93,7 @@ class Grid  extends React.Component{
       position:'relative',
       display:'inline-block',
       margin:'0 auto',
-      border:'4px solid red',
+      // border:'4px solid red',
       marginTop: 30,
 			WebKitBoxShadow: "0 0 5px rgba(0, 0, 0, 1)",
 			MozBoxShadow: "0 0 5px rgba(0, 0, 0, 1)",

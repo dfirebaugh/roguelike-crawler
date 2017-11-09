@@ -36,30 +36,10 @@ class Map extends React.Component{
 
 			this.cleanCell(a,b);
 		}
-		// console.log('cur: ' + newProps.nY + ' ' + newProps.nX)
-		// console.log('prev: ' + a + ' ' + b)
-
-
-		// var curPos = this.state.curLevel[newProps.nY][newProps.nX];
-		//
-		// console.log("newPropsX: " + newProps.nX + " Y:" + newProps.nY)
-		// if(curPos === '▒'){
-		// 	console.log('COLLIDE!');
-		// 	this.props.onCollide(newProps.playerDirection, newProps.nX, newProps.nY)
-		// 	}
-		// else{
-		// 	this.movePlayer(newProps);
-		// 	if(curPos === '#'){
-		// 		console.log('ENEMY!')
-		// 	}
-		// 	if(curPos === '^'){
-		// 		console.log('ITEM!');
-		// 	}
-		// }
 	}
 	updateLevel(arr){
 		var level = this.state.curLevel.slice();
-		arr[0][16] = 'P';
+		arr[0][16] = {show:'@'};
 
 		for(var x = 0;x< GRID_HEIGHT;x++){
 			var row = []
@@ -78,7 +58,7 @@ class Map extends React.Component{
 		if(levelArr.length > 1){
 			this.setState({pX:newProps.nX});
 			this.setState({pY:newProps.nY});
-			levelArr[newProps.nY][newProps.nX] = 'P';
+			levelArr[newProps.nY][newProps.nX] = {show:'@'};
 			this.setState({curLevel:levelArr});
 		}
 
@@ -95,7 +75,7 @@ class Map extends React.Component{
 			<div>
 				<div className="centerer">
 					<div id="game">
-						<Grid height={c.GRID_HEIGHT} width={c.GRID_WIDTH} map={this.state.curLevel}/>
+						<Grid height={c.GRID_HEIGHT} width={c.GRID_WIDTH} level={this.state.curLevel}/>
 					</div>
 				</div>
 

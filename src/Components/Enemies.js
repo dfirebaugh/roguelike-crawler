@@ -8,7 +8,7 @@ function Enemies(arr,GRID_WIDTH,GRID_HEIGHT){
   var gw = GRID_WIDTH;
   var gh = GRID_HEIGHT;
   placeEnemies(arr,gw,gh)
-  // console.log(arr)
+  console.log(arr)
   // console.log(arr.length)
 }
 
@@ -38,11 +38,10 @@ function renderEnemies(enemies,arr,gw,gh){
   for(var e = 0; e<enemies.length;e++){
     // enemies[e] = 'E'
     var enemy = enemies[e].split(',')
-    arr[enemy[0]][enemy[1]] = '#'
+    arr[enemy[0]][enemy[1]] = {show:'#',health:'100',attack:'10'}
+    // arr[enemy[0]][enemy[1]] = '#'
     // console.log(enemy[0] + ' ' + enemy[1])
   }
-
-
 }
 
 export default Enemies;

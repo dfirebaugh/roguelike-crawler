@@ -9,7 +9,7 @@ function generate(gh,gw,maxR,rSize){
   for(var x = 0; x<gh;x++){
     var row = [];
     for(var y = 0; y<gw;y++){
-      row.push('▒');
+      row.push({show:'▒'});
     }
     arr.push(row);
   }

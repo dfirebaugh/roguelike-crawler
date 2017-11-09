@@ -37,7 +37,8 @@ function renderItems(items,arr,gw,gh){
   for(var e = 0; e<items.length;e++){
     // enemies[e] = 'E'
     var item = items[e].split(',')
-    arr[item[0]][item[1]] = '^'
+    arr[item[0]][item[1]] = {show:'^'}
+    // arr[item[0]][item[1]] = '^'
     // console.log(enemy[0] + ' ' + enemy[1])
   }
 
