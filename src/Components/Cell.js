@@ -30,7 +30,7 @@ class Cell extends React.Component{
 //shows the cell number when placed inside of div
 // {(this.props.col === 0 ? this.props.row : this.props.col)}
     return (
-			<div onClick={this.handleClick} style={cellStyle}>{this.props.innerText}</div>
+			<div onClick={this.handleClick} style={cellStyle}>{(this.props.hidden ? '' : this.props.innerText)}</div>
 		);
   }
 }

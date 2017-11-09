@@ -1,6 +1,5 @@
 import React from 'react';
 import Cell from './Cell.js';
-import Torch from './Torch.js';
 
 
 class Grid  extends React.Component{
@@ -19,6 +18,7 @@ class Grid  extends React.Component{
 			this.isAlive = false;//Math.random() > .53;
 			this.neighbors = 0;
       this.innerText = '';
+      this.hidden = false;
 		}
 
     var grid = [];
@@ -46,6 +46,7 @@ class Grid  extends React.Component{
     var val = this.props.level[row][col];
     if(val){
       (bool ? cell.innerText = val.show : cell.innerText = "");
+      cell.hidden = val.hidden;
       // console.log(val);
     }
     // (cell.isAlive ? cell.isAlive = false : cell.isAlive = true);
@@ -80,8 +81,8 @@ class Grid  extends React.Component{
   handleCellClick(row,col){
     // console.log("cellClicked: " + row + "," + col);
     console.log(this.state.grid[row][col]);
-    (this.state.grid[row][col].innerText === '▒' ? this.updateCellState(row,col,false) : this.updateCellState(row,col,true));
-    this.renderGrid();
+    // (this.state.grid[row][col].innerText === '▒' ? this.updateCellState(row,col,false) : this.updateCellState(row,col,true));
+    // this.renderGrid();
   }
   render(){
     this.updateAllCells()
@@ -110,7 +111,7 @@ class Grid  extends React.Component{
 			var row = [];
 			for (var j = 0; j < this.props.width; j++) {
 				var cell = this.state.grid[i][j];
-				row.push(<Cell key={i + "," + j} isAlive={cell.isAlive} innerText={cell.innerText} row={i} col={j} parentMethod={this.handleCellClick} />);
+				row.push(<Cell key={i + "," + j} isAlive={cell.isAlive} hidden={cell.hidden} innerText={cell.innerText} row={i} col={j} parentMethod={this.handleCellClick} />);
 			}
 			cells.push(<div  key={i+","+j} style={rowStyle}>{row}</div>);
 		}

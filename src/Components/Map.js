@@ -61,12 +61,11 @@ class Map extends React.Component{
 			levelArr[newProps.nY][newProps.nX] = {show:'@'};
 			this.setState({curLevel:levelArr});
 		}
-
 	}
 	cleanCell(a,b){
 		var levelArr = this.state.curLevel.slice();
 		if(levelArr.length > 1){
-			levelArr[a][b] = ' ';
+			levelArr[a][b] = {show:' '};
 			this.setState({curLevel:levelArr});
 	}
 	}
