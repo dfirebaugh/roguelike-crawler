@@ -9,6 +9,8 @@ const GRID_HEIGHT = 25;
 const GRID_WIDTH = 35;
 const MAX_ROOMS = 24;
 const ROOM_SIZE_RANGE = [6,24];
+const item = {show:'#',health:'100',attack:'10',defeated:false,hidden:false,xp:10};
+const enemy = {show:'#',health:'100',attack:'10',defeated:false,hidden:false,xp:10};
 
 const c = {GRID_HEIGHT, GRID_WIDTH, MAX_ROOMS, ROOM_SIZE_RANGE}
 
@@ -19,8 +21,9 @@ class Map extends React.Component{
 		}
 	componentDidMount(){
 		var arr = generate(GRID_HEIGHT,GRID_WIDTH,MAX_ROOMS,ROOM_SIZE_RANGE);
-		Enemies(arr,GRID_WIDTH,GRID_HEIGHT);
-		Items(arr,GRID_WIDTH,GRID_HEIGHT);
+
+		Enemies(arr);
+		Items(arr);
 
 		this.props.getMap(arr);
 		this.updateLevel(arr);
@@ -33,10 +36,26 @@ class Map extends React.Component{
 		var a = this.state.pY;
 		if(a === newProps.nY && b === newProps.nX){
 		}else{
-
 			this.cleanCell(a,b);
 		}
 	}
+	// populate(arr){
+	// 	// if(arr.length > 1){
+	// 	let that = this;
+	// 		console.log(arr.map(function(row, y){
+	// 			return row.map(function(cell,x){
+	// 				console.log(arr[y][x].show)
+	// 				return isBlank([y,x],arr)
+	// 			})
+	// 		}))
+	// 		// console.log(this.state.curLevel)
+	// 		// console.loog(this.state.curLevel)
+	// 		// }
+	// 		function isBlank(cell){
+	// 			return arr[cell[0]][cell[1]].show === '';
+	// 		}
+  //
+	// }
 	updateLevel(arr){
 		var level = this.state.curLevel.slice();
 		arr[0][16] = {show:'@'};
@@ -68,7 +87,7 @@ class Map extends React.Component{
 			levelArr[a][b] = {show:' '};
 			this.setState({curLevel:levelArr});
 	}
-	}
+}
 	render(){
 		return(
 			<div>

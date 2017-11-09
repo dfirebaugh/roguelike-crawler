@@ -21,12 +21,11 @@ class Controller extends Component {
       if(e.key === "ArrowDown"||e.key === "ArrowUp"||e.key === "ArrowLeft"||e.key === "ArrowRight"||e.key === "w"||e.key === "a"||e.key === "s"||e.key === "d"){
         let count = this.state.moveCount;
         this.setState({moveCount:count+=1})
-        console.log(e.key)
         this.setState({playerDirection:e.key});
         let that = this;
         let newY = this.state.nY;
         let newX = this.state.nX;
-
+        // console.log(that.state.level)
         //stores the next position relative to keypress
         let dirMap = [
           {key:"ArrowDown",nextPos:[newY+1,newX]},
@@ -48,9 +47,7 @@ class Controller extends Component {
           if(isWithinGrid(dir.nextPos) && !isCollide(dir.nextPos)){
             if(isEnemy(dir.nextPos)){
               //attack!!!!
-              // if(this.state.level[dir.nextPos[0]][dir.nextPos[1]].health)
               attack(dir.nextPos)
-
             }
             else{
               if(isItem(dir.nextPos)){
@@ -67,7 +64,7 @@ class Controller extends Component {
         function moveTorch(pos){
           that.state.level.map(function(row, y){
             return row.map(function(cell,x){
-              return (isNear([y,x]) ? cell.hidden = false : cell.hidden = true)
+              return (isNear([y,x]) ? cell.hidden = false && console.log(y + " " + x) : cell.hidden = true)
             })
           })
         }

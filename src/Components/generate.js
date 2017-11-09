@@ -96,7 +96,7 @@ function agent(arr,gw,gh){
   function dig(r,c){
     // console.log(r + " " + c)
     // console.log(arr);
-    arr[r][c] = {show:''};
+    arr[r][c] = {show:'', coords:[r,c]};
   }
 
 }
