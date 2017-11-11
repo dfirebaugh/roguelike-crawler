@@ -4,7 +4,7 @@
 */
 
 function Items(arr){
-  var obj = {show:'^',addHealth:10,hidden:false}
+  var obj = {show:'^',addHealth:10,hidden:true}
 
   arr.map(function(row, y){
       return row.map(function(cell,x){

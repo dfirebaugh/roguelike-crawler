@@ -3,7 +3,7 @@
 */
 
 
-function generate(gh,gw,maxR,rSize){
+function generate(gh,gw, playerPos){
   var arr = []
   //blank out array
   for(var x = 0; x<gh;x++){
@@ -13,20 +13,21 @@ function generate(gh,gw,maxR,rSize){
     }
     arr.push(row);
   }
-  agent(arr,gw,gh);
+  agent(arr,gw,gh,playerPos);
 
   return arr;
 }
 
-function agent(arr,gw,gh){
+function agent(arr,gw,gh,playerPos){
   //loop through the array and analyze the cell
   // left to right -- top to bottom
   var count = 0;
-  var col = 16;
-  var row = 0;
-  var curPos = [0,16];
+  // var col = 16;
+  // var row = 0;
+  var curPos;
+  (playerPos ? curPos = playerPos : curPos = [0,16])
   var goodDir = false;
-  dig(row,col)
+  dig(curPos[0],curPos[1])
   // arr[0][0] = '';
 
   for(var i = 0;i<1024;i++){
