@@ -9,7 +9,7 @@ function Enemies(arr){
 
   arr.map(function(row, y){
       return row.map(function(cell,x){
-        var randEn = Math.floor(Math.random()*100);
+        let randEn = Math.floor(Math.random()*100);
         if(isBlank([y,x]) && randEn>95){
           Object.assign(cell,obj)
         }

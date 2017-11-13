@@ -4,11 +4,11 @@
 
 
 function generate(gh,gw, playerPos){
-  var arr = []
+  let arr = []
   //blank out array
-  for(var x = 0; x<gh;x++){
-    var row = [];
-    for(var y = 0; y<gw;y++){
+  for(let x = 0; x<gh;x++){
+    let row = [];
+    for(let y = 0; y<gw;y++){
       row.push({show:'▒',hidden:true,coords:[y,x]});
     }
     arr.push(row);
@@ -21,16 +21,16 @@ function generate(gh,gw, playerPos){
 function agent(arr,gw,gh,playerPos){
   //loop through the array and analyze the cell
   // left to right -- top to bottom
-  var count = 0;
-  // var col = 16;
-  // var row = 0;
-  var curPos;
+  let count = 0;
+  // let col = 16;
+  // let row = 0;
+  let curPos;
   (playerPos ? curPos = playerPos : curPos = [0,16])
-  var goodDir = false;
+  let goodDir = false;
   dig(curPos[0],curPos[1])
   // arr[0][0] = '';
 
-  for(var i = 0;i<1024;i++){
+  for(let i = 0;i<1024;i++){
     newDirection()
   }
 
@@ -38,9 +38,9 @@ function agent(arr,gw,gh,playerPos){
     count = 0;
     //provides a random direction
     // old directions -- I'm removing the diagnol directiosn --  [[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1]]
-    var possible = [[-1,0],[0,-1],[1,0],[0,1]]
-    var direction = possible[Math.floor(Math.random()*possible.length)];
-    var nextPos = [curPos[0]+direction[0],curPos[1]+direction[1]]
+    let possible = [[-1,0],[0,-1],[1,0],[0,1]]
+    let direction = possible[Math.floor(Math.random()*possible.length)];
+    let nextPos = [curPos[0]+direction[0],curPos[1]+direction[1]]
     goodDir = false;
 
     while(!goodDir){
@@ -57,7 +57,7 @@ function agent(arr,gw,gh,playerPos){
 
         if(count > 20){ //if this keeps looping and can't find a goodDir
         //move to bottom right and loop again
-        var largest = largestCell();
+        let largest = largestCell();
         // largest = largestCell();
         goodDir= true;// TODO -- add lowest,furthest right cell function
 
@@ -83,9 +83,9 @@ function agent(arr,gw,gh,playerPos){
 }
 
   function largestCell(){
-    var largest;
-    for(var x = 0;x < gh;x++){
-      for(var y = 0; y < gw;y++){
+    let largest;
+    for(let x = 0;x < gh;x++){
+      for(let y = 0; y < gw;y++){
         if(arr[x][y].show === ''){
           largest = [x,y]
         }

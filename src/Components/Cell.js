@@ -19,7 +19,7 @@ class Cell extends React.Component{
     // console.log(this.props.innerText)
   }
   render(){
-    var cellStyle = {
+    let cellStyle = {
       width: 16,
 			height: 16,
 			dislay: "inline-block",

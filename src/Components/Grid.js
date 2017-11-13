@@ -21,10 +21,10 @@ class Grid  extends React.Component{
       this.hidden = false;
 		}
 
-    var grid = [];
-		for (var i = 0; i < this.props.height; i++) {
-			var row = [];
-			for (var j = 0; j < this.props.width; j++) {
+    let grid = [];
+		for (let i = 0; i < this.props.height; i++) {
+			let row = [];
+			for (let j = 0; j < this.props.width; j++) {
 				row.push(new Cell());
 			}
 			grid.push(row);
@@ -33,17 +33,17 @@ class Grid  extends React.Component{
     // console.log(grid)
   }
   clear(){
-    for(var v = 0;v<this.props.height;v++){
-      for(var w = 0; w<this.props.width;w++){
-        var cell = this.state.grid[v][w];
+    for(let v = 0;v<this.props.height;v++){
+      for(let w = 0; w<this.props.width;w++){
+        let cell = this.state.grid[v][w];
         cell.isAlive = false
       }
     }
     this.renderGrid()
   }
   updateCellState(row,col,bool){
-    var cell = this.state.grid[row][col];
-    var val = this.props.level[row][col];
+    let cell = this.state.grid[row][col];
+    let val = this.props.level[row][col];
     if(val){
       (bool ? cell.innerText = val.show : cell.innerText = "");
       cell.hidden = val.hidden;
@@ -58,11 +58,11 @@ class Grid  extends React.Component{
   //   this.generate();
   // }
   updateAllCells(){
-    for(var x =0; x< this.props.height; x++){
-      var row = []
-      for(var y=0;y<this.props.width;y++){
+    for(let x =0; x< this.props.height; x++){
+      let row = []
+      for(let y=0;y<this.props.width;y++){
         row.push(this.props.level[x])
-        // var cell = this.state.grid[x][y];
+        // let cell = this.state.grid[x][y];
 
         // on first render, the map prop is empty
         // this checks if the map prop is populated
@@ -90,7 +90,7 @@ class Grid  extends React.Component{
     document.body.style.background = "#333";
 		document.body.style.color = "#FAFAFA";
 
-		var gridStyle = {
+		let gridStyle = {
       position:'relative',
       display:'inline-block',
       margin:'0 auto',
@@ -100,20 +100,20 @@ class Grid  extends React.Component{
 			MozBoxShadow: "0 0 5px rgba(0, 0, 0, 1)",
 			boxShadow: "0 0 5px rgba(0, 0, 0, 1)"
 		};
-    var rowStyle = {
+    let rowStyle = {
       display:'flex',
       float:'left',
       clear:'both'
     };
 
-		var cells = [];
-		for (var i = 0; i < this.props.height; i++) {
-			var row = [];
-			for (var j = 0; j < this.props.width; j++) {
-				var cell = this.state.grid[i][j];
+		let cells = [];
+		for (let i = 0; i < this.props.height; i++) {
+			let row = [];
+			for (let j = 0; j < this.props.width; j++) {
+				let cell = this.state.grid[i][j];
 				row.push(<Cell key={i + "," + j} isAlive={cell.isAlive} hidden={cell.hidden} innerText={cell.innerText} row={i} col={j} parentMethod={this.handleCellClick} />);
 			}
-			cells.push(<div  key={i+","+j} style={rowStyle}>{row}</div>);
+			cells.push(<div  key={i} style={rowStyle}>{row}</div>);
 		}
 
 		return (

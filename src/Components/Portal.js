@@ -7,11 +7,11 @@
 
 function Portal(arr){
   let addPortal = function(){
-    var count = 0;
+    let count = 0;
     arr.map(function(row, y){
       return row.map(function(cell,x){
-        var randEn = Math.floor(Math.random()*100);
-        if(isBlank([y,x]) && count === 0 && randEn>95){
+        let randEn = Math.floor(Math.random()*100);
+        if(isBlank([y,x]) && count === 0 && randEn>95 && x < 35 && x !== 16){
           count++
           Object.assign(cell,{show:'[]',name:'portal'})
           console.log('placed portal', y,x)

@@ -3,11 +3,12 @@ import '../App.css';
 import Map from './Map.js';
 import StatusBox from './StatusBox.js';
 import ToolTip from './ToolTip.js';
-// import Weapons from './Weapons.js';
+import Weapons from './Weapons.js';
 import generate from './generate.js';
 import Enemies from './Enemies.js';
 import Items from './Items.js';
 import Portal from './Portal.js';
+import Boss from './Boss.js';
 
 const GRID_HEIGHT = 25;
 const GRID_WIDTH = 35;
@@ -15,7 +16,7 @@ const GRID_WIDTH = 35;
 class Controller extends Component {
   constructor(props){
     super(props)
-    this.state = {moveCount:0,nX:16,nY:0, playerPos:[16,0],playerHealth:100,playerLevel:1,playerXp: 0,currentLevel:1,weapon: {name:'Fists',attackPower:30}}
+    this.state = {moveCount:0,nX:16,nY:0, playerPos:[16,0],playerHealth:100,playerLevel:1,playerXp: 0,dungeonLevel:1,weapon: {name:'Fists',attackPower:30}}
 
     this.getMap = this.getMap.bind(this);
   }
@@ -31,6 +32,12 @@ class Controller extends Component {
         }
         if(this.state.playerXp > 129){
           this.setState({playerLevel:3})
+        }
+        if(this.state.playerXp > 199){
+          this.setState({playerLevel:4})
+        }
+        if(this.state.playerXp > 249){
+          this.setState({playerLevel:5})
         }
         if(e.key === 'x'){
           this.newLevel()
@@ -54,14 +61,20 @@ class Controller extends Component {
     let curArr = this.state.curLevel;
     Enemies(arr);
     Items(arr);
-    Portal(arr);
+    if(this.state.dungeonLevel < 2){
+      Portal(arr);
+    }
+    else{
+      Boss(arr);
+    }
+    Weapons(arr,this.state.dungeonLevel+1)
 
     curArr.map(function(row,i){
       return row.map(function(cell,l){
         return Object.assign(cell,arr[i][l])
       })
     })
-    this.setState({currentLevel:this.state.currentLevel+1})
+    this.setState({dungeonLevel:this.state.dungeonLevel+1})
     this.setState({curLevel:curArr})
   }
   move(dir){
@@ -92,11 +105,15 @@ class Controller extends Component {
         }
         else{
           if(that.state.level[dir.nextPos[0]][dir.nextPos[1]].show === '[]'){
-              that.newLevel()
+            that.newLevel()
           }
           if(isItem(dir.nextPos)){
             console.log('Picked Up health pack!')
             that.setState({playerHealth: that.state.playerHealth+=that.state.level[dir.nextPos[0]][dir.nextPos[1]].addHealth})
+          }
+          if(that.state.level[dir.nextPos[0]][dir.nextPos[1]].type === 'weapon'){
+            console.log('Picked up ' +  that.state.level[dir.nextPos[0]][dir.nextPos[1]].name + "!")
+            that.setState({weapon:that.state.level[dir.nextPos[0]][dir.nextPos[1]]})
           }
           newX = dir.nextPos[1];
           newY = dir.nextPos[0];
@@ -121,7 +138,7 @@ class Controller extends Component {
       return dirMap.key === dir;
     }
     function isEnemy(nextPos){ //does the next position contain an enemy?
-      return that.state.level[nextPos[0]][nextPos[1]].show === '#' && !that.state.level[nextPos[0]][nextPos[1]].defeated;
+      return that.state.level[nextPos[0]][nextPos[1]].show === '#' && !that.state.level[nextPos[0]][nextPos[1]].defeated || that.state.level[nextPos[0]][nextPos[1]].show === 'B' && !that.state.level[nextPos[0]][nextPos[1]].defeated;
     }
     function isItem(nextPos){ //does the next position contain an item?
       return that.state.level[nextPos[0]][nextPos[1]].show === '^';
@@ -134,11 +151,12 @@ class Controller extends Component {
     }
     function attack(nextPos){
       let nextCell = that.state.level[nextPos[0]][nextPos[1]]
-
-      // console.log("enemy health: " + nextCell.health +'\n'+ ' enemy hit for: ' + nextCell.attack +'\n'+ ' your health: ' + that.state.playerHealth +'\n'+ " you hit for: " + that.state.weapon.attackPower )
-
+      let attackRoll = Math.floor(Math.random() * 10) + 1;
+      let levelMod = parseFloat((that.state.playerLevel * 1.5).toFixed(2));
+      let hit = that.state.weapon.attackPower+attackRoll + that.state.playerLevel ;
+      console.log("enemy health: " + nextCell.health +'\n'+ ' enemy hit for: ' + nextCell.attack +'\n'+ ' your health: ' + that.state.playerHealth +'\n'+ " you hit for: " + hit )
       if(nextCell.health > that.state.weapon.attackPower){
-        nextCell.health -= that.state.weapon.attackPower
+        nextCell.health -= hit
         that.setState({playerHealth:that.state.playerHealth -= nextCell.attack})
       }
       else{
@@ -147,7 +165,6 @@ class Controller extends Component {
         that.setState({playerXp:that.state.playerXp += nextCell.xp});
       }
     }
-
   }
 
 
@@ -160,6 +177,8 @@ class Controller extends Component {
     let dungeon = <Map level= {this.state.curLevel} playerDirection={this.state.playerDirection} getMap={this.getMap} onCollide={this.collideHandler} nX={this.state.nX} nY={this.state.nY} playerPos = {this.state.playerPos}/>
     let gameOver = <h1> YOU DIED <p>GAMEOVER</p>  </h1>
     let board = (this.state.playerHealth > 0 ? dungeon : gameOver)
+    let isWin = (this.state.xp > 700 ? win : board)
+    let win = <h1> YOU WON <p>GAMEOVER</p>  </h1>
     let tip = <ToolTip moveCount = {this.state.moveCount} />
 
     document.body.style.background = "#333";
@@ -168,9 +187,9 @@ class Controller extends Component {
     return (
       <div>
       <div className="App-header">
-      <StatusBox playerLevel = {this.state.playerLevel} playerXp = {this.state.playerXp} playerHealth = {this.state.playerHealth} attackPower = {this.state.attackPower} currentLevel = {this.state.currentLevel} weapon = {this.state.weapon}/>
+      <StatusBox playerLevel = {this.state.playerLevel} playerXp = {this.state.playerXp} playerHealth = {this.state.playerHealth} attackPower = {this.state.attackPower} dungeonLevel = {this.state.dungeonLevel} weapon = {this.state.weapon}/>
       </div>
-        {(this.state.moveCount === 0 ? tip : board)}
+        {(this.state.moveCount === 0 ? tip : isWin)}
       </div>
     );
   }

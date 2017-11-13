@@ -4,6 +4,7 @@ import Grid from './Grid.js';
 import Enemies from './Enemies.js';
 import Items from './Items.js';
 import Portal from './Portal.js';
+import Weapons from './Weapons.js';
 
 
 
@@ -21,10 +22,11 @@ class Map extends React.Component{
 		this.state = {curLevel:[],playerDirection:this.props.playerDirection,pX:16,pY:0,pH:100,pAtt:10}
 		}
 	componentDidMount(){
-		var arr = this.props.level
+		let arr = this.props.level
 		Enemies(arr);
     Items(arr);
 		Portal(arr);
+		Weapons(arr,1)
 
 
 		this.props.getMap(arr);
@@ -34,20 +36,20 @@ class Map extends React.Component{
 		// console.log(newProps)
 		this.movePlayer(newProps);
 
-		var b = this.state.pX;
-		var a = this.state.pY;
+		let b = this.state.pX;
+		let a = this.state.pY;
 		if(a === newProps.nY && b === newProps.nX){
 		}else{
 			this.cleanCell(a,b);
 		}
 	}
 	updateLevel(arr){
-		var level = this.state.curLevel.slice();
+		let level = this.state.curLevel.slice();
 		arr[0][16] = {show:'@'};
 
-		for(var x = 0;x< GRID_HEIGHT;x++){
-			var row = []
-			for(var y = 0; y<GRID_WIDTH; y++){
+		for(let x = 0;x< GRID_HEIGHT;x++){
+			let row = []
+			for(let y = 0; y<GRID_WIDTH; y++){
 				if(arr){
 					row.push(arr[x][y])
 				}
@@ -57,7 +59,7 @@ class Map extends React.Component{
 		this.setState({curLevel:arr});
 	}
 	movePlayer(newProps){
-		var levelArr = this.state.curLevel.slice();
+		let levelArr = this.state.curLevel.slice();
 		if(levelArr.length > 1){
 			this.setState({pX:newProps.nX});
 			this.setState({pY:newProps.nY});
@@ -66,7 +68,7 @@ class Map extends React.Component{
 		}
 	}
 	cleanCell(a,b){
-		var levelArr = this.state.curLevel.slice();
+		let levelArr = this.state.curLevel.slice();
 		if(levelArr.length > 1){
 			levelArr[a][b] = {show:' '};
 			this.setState({curLevel:levelArr});
