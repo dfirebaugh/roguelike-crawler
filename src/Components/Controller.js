@@ -191,7 +191,7 @@ class Controller extends Component {
     let gameOver = <h1> YOU DIED <p>GAMEOVER</p>  </h1>
     let board = (this.state.playerHealth > 0 ? dungeon : gameOver)
     console.log('render')
-    let isWin = (this.state.playerXp > 700 ? console.log('test') : board)
+    let isWin = (this.state.playerXp > 700 ? console.log('You Win') : board)
     let win = <h1> YOU WON <p>GAMEOVER</p>  </h1>
     let tip = <ToolTip moveCount = {this.state.moveCount} />
 
