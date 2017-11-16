@@ -56,3 +56,12 @@
 .ToolTip{
   text-align:left;
 }
+
+.combatLog{
+  background:black;
+  width:30%;
+  /*height:100%;*/
+}
+#game{
+  display:flex;
+}

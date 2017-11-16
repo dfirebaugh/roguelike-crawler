@@ -9,6 +9,7 @@ import Items from './Items.js';
 import Portal from './Portal.js';
 import Boss from './Boss.js';
 import Grid from './Grid.js';
+import CombatLog from './CombatLog.js';
 
 const GRID_HEIGHT = 25;
 const GRID_WIDTH = 35;
@@ -17,6 +18,21 @@ class Controller extends Component {
   constructor(props){
     super(props)
     this.state = {playerHealth:100,playerPos:[16,0],isWin:false,gameOver:false}
+
+    this.moveCount = 0;
+    this.nX = 16;
+    this.nY=0;
+    this.playerPos = [16,0];
+    // this.state.playerHealth = 100;
+    this.m1 = '';
+    this.m2 = '';
+    this.m3 = '';
+    this.playerLevel=1;
+    this.playerXp = 0;
+    this.dungeonLevel=1;
+    this.playerDirection;
+    this.weapon = {name:'Fists',attackPower:30};
+
   }
   componentWillMount(){
     let arr = generate(GRID_HEIGHT,GRID_WIDTH);
@@ -26,20 +42,11 @@ class Controller extends Component {
     Weapons(arr,1)
     arr[0][16] = {show:'@'};
     this.curLevel = arr;
-    this.initVars();
+    // this.initVars();
     this.Game();
   }
   initVars(){
-    this.moveCount = 0;
-    this.nX = 16;
-    this.nY=0;
-    this.playerPos = [16,0];
-    // this.state.playerHealth = 100;
-    this.playerLevel=1;
-    this.playerXp = 0;
-    this.dungeonLevel=1;
-    this.playerDirection;
-    this.weapon = {name:'Fists',attackPower:30};
+
   }
 
 
@@ -131,12 +138,17 @@ class Controller extends Component {
           }
           if(isItem(dir.nextPos)){
             console.log('Picked Up health pack!')
+            that.m1 = 'Picked Up health pack! \n +' + that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth+'hp!' ;
+            that.m2 = ''
+            that.m3 = ''
+
             //that.playerHealth += that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth;
             that.setState({playerHealth:that.state.playerHealth + that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth})
             console.log(that.state.playerHealth, that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth)
           }
           if(that.curLevel[dir.nextPos[0]][dir.nextPos[1]].type === 'weapon'){
             console.log('Picked up ' +  that.curLevel[dir.nextPos[0]][dir.nextPos[1]].name + "!")
+            that.m1 = 'Picked up ' +  that.curLevel[dir.nextPos[0]][dir.nextPos[1]].name + "!"
             that.weapon = that.curLevel[dir.nextPos[0]][dir.nextPos[1]]
 
           }
@@ -192,6 +204,9 @@ class Controller extends Component {
       let levelMod = parseFloat((that.playerLevel * 1.5).toFixed(2));
       let hit = that.weapon.attackPower+attackRoll + levelMod ;
       console.log("enemy health: " + nextCell.health +'\n'+ ' enemy hit for: ' + nextCell.attack +'\n'+ ' your health: ' + that.state.playerHealth +'\n'+ " you hit for: " + hit )
+      that.m1 = "enemy health: " + nextCell.health;
+      that.m2 = 'enemy hit for: ' + nextCell.attack;
+      that.m3 =   "you hit for: " + hit ;
       if(nextCell.health > that.weapon.attackPower){
         nextCell.health -= hit
         that.setState({playerHealth:that.state.playerHealth - nextCell.attack});
@@ -199,8 +214,10 @@ class Controller extends Component {
       else{
         nextCell.defeated = true;
         console.log('you beat this enemy!')
+        that.m1 = 'you beat this enemy!'
         that.playerXp += nextCell.xp;
         console.log(that.playerXp, nextCell.xp)
+        that.m2 = "You've gained " + nextCell.xp + "xp!"
 
       }
       // that.forceUpdate();
@@ -209,12 +226,14 @@ class Controller extends Component {
   render() {
     let dungeon =
     <div id="game">
-    <Grid height={GRID_HEIGHT} width={GRID_WIDTH} level={this.curLevel}/>
+    <CombatLog  m1={this.m1} m2={this.m2} m3={this.m3} />
+      <Grid height={GRID_HEIGHT} width={GRID_WIDTH} level={this.curLevel}/>
+      <div className='combatLog'></div>
     </div>
 
     let gameOver = <h1> YOU DIED <p>GAMEOVER</p>  </h1>
     let board = (this.state.playerHealth > 0 ? dungeon : gameOver)
-    console.log('render', this.moveCount)
+    // console.log('render', this.moveCount)
     let isWin = (this.playerXp > 700 ? console.log('You Win') : board)
     let win = <h1> YOU WON <p>GAMEOVER</p>  </h1>
     let tip = <ToolTip moveCount = {this.moveCount} />
