@@ -16,7 +16,7 @@ const GRID_WIDTH = 35;
 class Controller extends Component {
   constructor(props){
     super(props)
-    this.state = {playerPos:[16,0],isWin:false,gameOver:false}
+    this.state = {playerHealth:100,playerPos:[16,0],isWin:false,gameOver:false}
   }
   componentWillMount(){
     let arr = generate(GRID_HEIGHT,GRID_WIDTH);
@@ -34,7 +34,7 @@ class Controller extends Component {
     this.nX = 16;
     this.nY=0;
     this.playerPos = [16,0];
-    this.playerHealth = 100;
+    // this.state.playerHealth = 100;
     this.playerLevel=1;
     this.playerXp = 0;
     this.dungeonLevel=1;
@@ -63,7 +63,7 @@ class Controller extends Component {
       if(this.playerXp > 249){
         this.playerLevel = 5
       }
-      if(this.playerHealth > 0){
+      if(this.state.playerHealth > 0){
         if(e.key === "ArrowDown"||e.key === "ArrowUp"||e.key === "ArrowLeft"||e.key === "ArrowRight"||e.key === "w"||e.key === "a"||e.key === "s"||e.key === "d"){
           let count = this.moveCount;
           this.moveCount +=1;
@@ -131,8 +131,9 @@ class Controller extends Component {
           }
           if(isItem(dir.nextPos)){
             console.log('Picked Up health pack!')
-            that.playerHealth += that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth;
-            console.log(that.playerHealth, that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth)
+            //that.playerHealth += that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth;
+            that.setState({playerHealth:that.state.playerHealth + that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth})
+            console.log(that.state.playerHealth, that.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth)
           }
           if(that.curLevel[dir.nextPos[0]][dir.nextPos[1]].type === 'weapon'){
             console.log('Picked up ' +  that.curLevel[dir.nextPos[0]][dir.nextPos[1]].name + "!")
@@ -190,17 +191,19 @@ class Controller extends Component {
       let attackRoll = Math.floor(Math.random() * 10) + 1;
       let levelMod = parseFloat((that.playerLevel * 1.5).toFixed(2));
       let hit = that.weapon.attackPower+attackRoll + levelMod ;
-      console.log("enemy health: " + nextCell.health +'\n'+ ' enemy hit for: ' + nextCell.attack +'\n'+ ' your health: ' + that.playerHealth +'\n'+ " you hit for: " + hit )
+      console.log("enemy health: " + nextCell.health +'\n'+ ' enemy hit for: ' + nextCell.attack +'\n'+ ' your health: ' + that.state.playerHealth +'\n'+ " you hit for: " + hit )
       if(nextCell.health > that.weapon.attackPower){
         nextCell.health -= hit
-        that.playerHealth -= nextCell.attack;
+        that.setState({playerHealth:that.state.playerHealth - nextCell.attack});
       }
       else{
         nextCell.defeated = true;
         console.log('you beat this enemy!')
         that.playerXp += nextCell.xp;
         console.log(that.playerXp, nextCell.xp)
+
       }
+      // that.forceUpdate();
     }
   }
   render() {
@@ -210,7 +213,7 @@ class Controller extends Component {
     </div>
 
     let gameOver = <h1> YOU DIED <p>GAMEOVER</p>  </h1>
-    let board = (this.playerHealth > 0 ? dungeon : gameOver)
+    let board = (this.state.playerHealth > 0 ? dungeon : gameOver)
     console.log('render', this.moveCount)
     let isWin = (this.playerXp > 700 ? console.log('You Win') : board)
     let win = <h1> YOU WON <p>GAMEOVER</p>  </h1>
@@ -222,7 +225,7 @@ class Controller extends Component {
     return (
       <div>
       <div className="App-header">
-      <StatusBox playerLevel = {this.playerLevel} playerXp = {this.playerXp} playerHealth = {this.playerHealth} attackPower = {this.attackPower} dungeonLevel = {this.dungeonLevel} weapon = {this.weapon}/>
+      <StatusBox playerLevel = {this.playerLevel} playerXp = {this.playerXp} playerHealth = {this.state.playerHealth} attackPower = {this.attackPower} dungeonLevel = {this.dungeonLevel} weapon = {this.weapon}/>
       </div>
       {(this.playerXp > 700 ? win : "")}
       {(this.moveCount === 0 ? tip : isWin)}
