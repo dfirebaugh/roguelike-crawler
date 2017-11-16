@@ -5,7 +5,7 @@
 */
 
 function Enemies(arr){
-  let obj = {show:'#',health:'120',attack:'10',defeated:false,hidden:true,xp:10}
+  let obj = {show:'#',health:'150',attack:'10',defeated:false,hidden:true,xp:10}
 
   arr.map(function(row, y){
       return row.map(function(cell,x){

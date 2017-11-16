@@ -2,9 +2,9 @@ function weapons(arr,dungeonLevel){
   let addWeapon = function(){
   let obj = [
     {type:'weapon',show:'W',name:'Fists',attackPower:30},
-    {type:'weapon',show:'s',name:'sword',level:1,attackPower:50},
-    {type:'weapon',show:'+',name:'sword+1',level:2,attackPower:60},
-    {type:'weapon',show:'++',name:'magic sword',level:3,attackPower:80}
+    {type:'weapon',show:'s',name:'sword',level:1,attackPower:60},
+    {type:'weapon',show:'+',name:'sword+1',level:2,attackPower:70},
+    {type:'weapon',show:'++',name:'magic sword',level:3,attackPower:100}
   ];
 
   let count = 0;

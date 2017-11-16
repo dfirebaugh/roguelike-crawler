@@ -201,7 +201,7 @@ class Controller extends Component {
     function attack(nextPos){
       let nextCell = that.curLevel[nextPos[0]][nextPos[1]]
       let attackRoll = Math.floor(Math.random() * 10) + 1;
-      let levelMod = parseFloat((that.playerLevel * 1.5).toFixed(2));
+      let levelMod = parseFloat((that.playerLevel * 5).toFixed(2));
       let hit = that.weapon.attackPower+attackRoll + levelMod ;
       console.log("enemy health: " + nextCell.health +'\n'+ ' enemy hit for: ' + nextCell.attack +'\n'+ ' your health: ' + that.state.playerHealth +'\n'+ " you hit for: " + hit )
       that.m1 = "enemy health: " + nextCell.health;
