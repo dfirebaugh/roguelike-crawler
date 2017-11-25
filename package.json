@@ -1,6 +1,6 @@
 {
   "name": "roguelike-crawler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "homepage": "https://dfirebaugh.github.io/roguelike-crawler",
   "dependencies": {
@@ -19,6 +19,6 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "gh-pages": "^1.0.0"
+    "gh-pages": "^1.1.0"
   }
 }

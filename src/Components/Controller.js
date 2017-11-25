@@ -235,7 +235,7 @@ class Controller extends Component {
     let board = (this.state.playerHealth > 0 ? dungeon : gameOver)
     // console.log('render', this.moveCount)
     let isWin = (this.playerXp > 700 ? console.log('You Win') : board)
-    let win = <h1> YOU WON <p>GAMEOVER</p>  </h1>
+    let win = <h1> YOU WON!!!  </h1>
     let tip = <ToolTip moveCount = {this.moveCount} />
 
     document.body.style.background = "#333";
