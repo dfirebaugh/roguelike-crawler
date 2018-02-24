@@ -4,10 +4,10 @@
 */
 
 function Items(arr){
-  let obj = {show:'^',addHealth:20,hidden:true}
+  let obj = {show:'^',type:'health',addHealth:20,hidden:true}
 
   arr.map(function(row, y){
-      return row.map(function(cell,x){
+      return row.forEach(function(cell,x){
         let randEn = Math.floor(Math.random()*100);
         if(isBlank([y,x]) && randEn>95){
           Object.assign(cell,obj)

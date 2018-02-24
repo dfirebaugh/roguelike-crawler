@@ -5,10 +5,18 @@
 */
 
 function Enemies(arr){
-  let obj = {show:'#',health:'150',attack:'10',defeated:false,hidden:true,xp:10}
+  let obj = {
+    type:'enemy',
+    // show:'#',
+    health:'150',
+    attack:'10',
+    defeated:false,
+    hidden:true,
+    xp:10
+  }
 
   arr.map(function(row, y){
-      return row.map(function(cell,x){
+      return row.forEach(function(cell,x){
         let randEn = Math.floor(Math.random()*100);
         if(isBlank([y,x]) && randEn>95){
           Object.assign(cell,obj)

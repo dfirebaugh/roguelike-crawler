@@ -9,11 +9,13 @@ function weapons(arr,dungeonLevel){
 
   let count = 0;
   arr.map(function(row, y){
-    return row.map(function(cell,x){
+    return row.forEach(function(cell,x){
       let randEn = Math.floor(Math.random()*100);
       if(isBlank([y,x]) && count === 0 && randEn>95 && x < 35 && x !== 16){
         count++
         Object.assign(cell,obj[dungeonLevel])
+        cell.pos.x = x;
+        cell.pos.y = y;
         console.log('placed weapon', y,x, obj[dungeonLevel])
       }
     })

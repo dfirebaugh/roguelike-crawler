@@ -1,105 +1,144 @@
 /*
 *    Generates a random Dungeon map -- returns it as an array
 */
-
-
-function generate(gh,gw, playerPos){
-  let arr = []
-  //blank out array
-  for(let x = 0; x<gh;x++){
-    let row = [];
-    for(let y = 0; y<gw;y++){
-      row.push({show:'▒',hidden:true,coords:[y,x]});
-    }
-    arr.push(row);
-  }
-  agent(arr,gw,gh,playerPos);
-
+let populateGrid = (size, obj) => {
+  let arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
+  Array.apply(null, Array(size.GRID_WIDTH)).map((currX, x) => obj.init({x,y})
+  ));
   return arr;
 }
 
-function agent(arr,gw,gh,playerPos){
-  //loop through the array and analyze the cell
-  // left to right -- top to bottom
-  let count = 0;
-  // let col = 16;
-  // let row = 0;
-  let curPos;
-  (playerPos ? curPos = playerPos : curPos = [0,16])
-  let goodDir = false;
-  dig(curPos[0],curPos[1])
-  // arr[0][0] = '';
+// let placePlayer = (pos, grid) => {
+//   console.log(pos)
+//   console.log('is this running?')
+//   console.log('should be player: ', grid[pos.y][pos.x])
+//   return grid[pos.x][pos.y].type = 'player'
+// };
 
-  for(let i = 0;i<1024;i++){
-    newDirection()
-  }
-
-  function newDirection(){
-    count = 0;
-    //provides a random direction
-    // old directions -- I'm removing the diagnol directiosn --  [[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1]]
-    let possible = [[-1,0],[0,-1],[1,0],[0,1]]
-    let direction = possible[Math.floor(Math.random()*possible.length)];
-    let nextPos = [curPos[0]+direction[0],curPos[1]+direction[1]]
-    goodDir = false;
-
-    while(!goodDir){
-      getDirection();
-
-    }
-    if(goodDir){
-      // console.log('curPos' + curPos)
-    }
-    function getDirection(){
-      count++;
-
-      if(curPos[0] < 24){
-
-        if(count > 20){ //if this keeps looping and can't find a goodDir
-        //move to bottom right and loop again
-        let largest = largestCell();
-        // largest = largestCell();
-        goodDir= true;// TODO -- add lowest,furthest right cell function
-
-        curPos[0] = largest[0];
-        curPos[1] = largest[1];
-
-      }else{
-        if(nextPos[0] >= 0 && nextPos[1] >= 0){ // if the direction results in something that is not on the map, it is a bad direction
-          curPos[0] += direction[0];
-          curPos[1] += direction[1];
-          dig(curPos[0],curPos[1])
-          goodDir = true;
-          // }
-        }else{
-          goodDir = false;
-        }
-      }
-    }else{
-      goodDir = true;
-    }
-
-  }
+let newDirection = (curPos) => {
+  //possible directions
+  let possible = [
+    [-1,0],[0,-1],
+    [1,0],[0,1]
+  ];
+  // roll a d4
+  let direction = possible[Math.floor(Math.random()*possible.length)];
+  // console.log(direction+curPos)
+  let newDir = curPos.map((n,i)=>n+direction[i])
+  return newDir;
 }
 
-  function largestCell(){
-    let largest;
-    for(let x = 0;x < gh;x++){
-      for(let y = 0; y < gw;y++){
-        if(arr[x][y].show === ''){
-          largest = [x,y]
-        }
+// increment in every direction and determine which direction has the closest wall
+// let findNearestWall = (curPos, grid) => {
+//   let nextPos = curPos;
+//   let count = 1;
+//   let increment =+ curPos[0]+count;
+//
+//   // console.log('inc: ', nextPos[0] + increment)
+//   console.log('grid: ' , grid[curPos[0]][curPos[1]])
+//
+//   // while (isWithinGrid(nextPos) || isWall(nexPos)){
+//   //
+//   // }
+//   return nextPos
+// }
+//
+
+let isWithinGrid = (pos, size) => {
+  return pos[0] < size.GRID_HEIGHT &&
+         pos[1] < size.GRID_WIDTH &&
+        pos[0] >= 0 &&
+        pos[1] >= 0;
+}
+
+// //iterates through the 2d array and runs a function on each cell
+// let eachCell = (grid, fn) => grid.forEach(row=>row.forEach(cell=>fn(cell, grid)));
+// let isPlayer = cell => cell.show == "@";
+// let isWall = (pos, grid) => {
+//   return grid[pos[0]][pos[1]].type === 'wall';
+// }
+
+let countFloor = (grid) => {
+  let count = 0;
+  grid.forEach((row) => {
+    row.forEach((cell) => {
+      if (cell.show === ''){
+        count++;
       }
+    })
+  })
+
+  return count;
+}
+
+// take in height and width and generate a new level
+let generate = (size, level, playerPos) => {
+  const Cell = {
+    init(pos) {
+      const newCell = Object.create(this);
+      newCell.type = 'wall';
+      newCell.hidden = true;
+      newCell.pos = {
+        x: pos.x,
+        y: pos.y
+      };
+
+      return newCell;
     }
-    return largest;
   }
 
-  function dig(r,c){
-    // console.log(r + " " + c)
-    // console.log(arr);
-    arr[r][c] = {show:'', coords:[r,c]};
+  let Grid = populateGrid(size, Cell);
+  // (!playerPos ? '' : playerPos = {x:0,y:16})
+  console.log("playerPos: ", playerPos);
+  // console.log('level: ', level);
+
+
+  return agent(Grid,size, playerPos);
+}
+
+
+//agent will move around the grid one cell at a time to dig out a path/cavern
+let agent = (grid,size, playerPos) => {
+  let count = 0;
+  let curPos = playerPos
+  let nextPos;
+  if(count === 0){
+    curPos = [playerPos.x, playerPos.y];
+  }
+  // placePlayer(playerPos, grid);
+  // console.log('wall: ', findNearestWall(curPos, grid))
+
+  let dig = (pos, grid) => {
+    grid[pos[0]][pos[1]].show = '';
+    grid[pos[0]][pos[1]].type = 'floor';
   }
 
+  console.log('curPos',curPos)
+
+  // recursion to loop through grid
+  let digLoop = () => {
+    nextPos = newDirection(curPos)
+    let goodDir = isWithinGrid(nextPos, size)
+
+    if(!goodDir){
+      //TODO: get smarter about changing direction so there's less recursion
+      nextPos = [curPos[0]-1][curPos[1]-1];
+      digLoop()
+    }
+    dig(nextPos, grid)
+    curPos = nextPos
+    if(countFloor(grid) < Math.round(size.GRID_WIDTH * size.GRID_HEIGHT / 3)/1){
+      // if(count < 50){
+      return digLoop();
+    }
+    return;
+  }
+
+  digLoop()
+
+  console.log('Floor count: ', countFloor(grid))
+
+  return grid
 }
 
 

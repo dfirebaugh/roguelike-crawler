@@ -65,3 +65,73 @@
 #game{
   display:flex;
 }
+
+.image-for-cell{
+  height:15px;
+  width:auto;
+}
+
+.dungeonKey{
+  padding-top:5em;
+}
+.dungeonKey ul{
+  list-style-type:none;
+  }
+
+/*  styles for cells */
+.player{
+  background:#6F4D8F;
+  height:12px;
+  width:12px;
+
+  border:2px black solid;
+}
+.enemy{
+  background:darkred;
+  height:12px;
+  /* margin-top:2px; */
+  width:12px;
+  border:2px grey solid;
+}
+.health{
+  background:#714C8F;
+  border:solid #5E7914 4px;
+  /* margin:5px; */
+  padding:4px;
+  /* height:15px;
+  width:15px; */
+}
+.portal{
+  background:#A15089;
+  font-size:9pt;
+  height:16px;
+  width:16px;
+}
+.weapon{
+  background:#9476AB;
+  height:16px;
+  width:16px;
+}
+.wall{
+  background:#803615;
+  padding-left:4px;
+  color:black;
+  height:13px;
+  width:6px;
+  border:2px solid black;
+  overflow: hidden;
+}
+.floor{
+  background:#515644;
+  height:16px;
+  width:16px;
+}
+
+.boss{
+  background:black;
+  font-size:6pt;
+  color:red;
+  height:12px;
+  width:12px;
+  border:2px red solid;
+}
