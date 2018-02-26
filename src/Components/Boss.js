@@ -24,7 +24,7 @@ function Boss(arr){
 addBoss()
 
 function isBlank(pos){
-  return arr[pos[0]][pos[1]].show === '';
+  return arr[pos[0]][pos[1]].type === 'floor';
 }
 }
 

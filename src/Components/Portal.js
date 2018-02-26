@@ -8,7 +8,7 @@
 function Portal(arr){
   let addPortal = function(){
     let count = 0;
-    arr.map(function(row, y){
+    arr.forEach(function(row, y){
       return row.forEach(function(cell,x){
         let randEn = Math.floor(Math.random()*100);
         if(isBlank([y,x]) && count === 0 && randEn>95 && x < 35 && x !== 16){
@@ -30,7 +30,7 @@ function Portal(arr){
 
 
   function isBlank(pos){
-    return arr[pos[0]][pos[1]].show === '';
+    return arr[pos[0]][pos[1]].type === 'floor';
   }
 }
 

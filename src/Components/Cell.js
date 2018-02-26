@@ -2,7 +2,7 @@ import React from 'react';
 
 class Cell extends React.Component{
 
-  getGraphic = () => {
+  getGraphic = (type) => {
     let graphics = [
       {
         type:'wall',
@@ -10,7 +10,6 @@ class Cell extends React.Component{
       },
       {
         type:'player',
-        // show:'@'
         show:<div className='player'></div>
       },
       {
@@ -24,7 +23,6 @@ class Cell extends React.Component{
       },
       {
         type:'weapon',
-        // show:'w'
         show:<div className='weapon'>w</div>
       },
       {
@@ -39,18 +37,22 @@ class Cell extends React.Component{
         type:'health',
         show:<div className='health'></div>
       },
+      {
+        type:'hidden',
+        show:<div className='hiddenCell'></div>
+      }
     ];
 
     let newGraphic = graphics.find(el => {
-      return el.type === this.props.type;
+      return el.type === type;
     })
 
-    return (newGraphic ? newGraphic.show : this.props.show )
-    // return newGraphic.show
+    // return (newGraphic ? newGraphic.show : this.props.show )
+    return newGraphic.show
   }
   render(){
     return (
-			<div onClick={this.handleClick} style={cellStyle}>{(this.props.hidden ? this.getGraphic(this.props.type) : this.getGraphic(this.props.type))}</div>
+			<div onClick={this.handleClick} style={cellStyle}>{(this.props.hidden ? this.getGraphic('hidden'): this.getGraphic(this.props.type))}</div>
 
 		);
   }

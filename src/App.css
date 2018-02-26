@@ -76,6 +76,7 @@
 }
 .dungeonKey ul{
   list-style-type:none;
+  text-align:left;
   }
 
 /*  styles for cells */
@@ -134,4 +135,9 @@
   height:12px;
   width:12px;
   border:2px red solid;
+}
+.hiddenCell{
+  background:rgb(51, 51, 51);
+  height:16px;
+  width:16px;
 }

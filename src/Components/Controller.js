@@ -18,7 +18,7 @@ const GRID_WIDTH = 35;
 class Controller extends Component {
   constructor(props){
     super(props)
-    this.state = {playerHealth:100,playerPos:[0,16],isWin:false,gameOver:false}
+    this.state = {playerHealth:110,playerPos:{x:16,y:0},isWin:false,gameOver:false}
 
     this.moveCount = 1;
     this.playerPos = [16,0];
@@ -27,50 +27,56 @@ class Controller extends Component {
     this.m3 = '';
     this.playerLevel=1;
     this.playerXp = 0;
-    this.dungeonLevel=1;
+    this.curFloor=1;
     this.weapon = {name:'Fists',attackPower:30};
   }
   componentWillMount(){
-    let dungeonLevel = this.dungeonLevel;
-    let arr = generate({GRID_HEIGHT,GRID_WIDTH}, dungeonLevel, {x:0,y:16});
+    let dungeonLevel = this.curFloor;
+    let arr = generate({GRID_HEIGHT,GRID_WIDTH}, dungeonLevel, {x:16,y:0});
     console.log(arr)
     Enemies(arr);
     Items(arr);
     Portal(arr);
     Weapons(arr,1)
-    this.curLevel = arr;
-    if(this.dungeonLevel===1){
-      this.curLevel[this.state.playerPos[0]][this.state.playerPos[1]].type = 'player'
+    this.curGrid = arr;
+    if(this.curFloor===1){
+      this.curGrid[this.state.playerPos.y][this.state.playerPos.x].type = 'player'
     }
-
+    this.moveTorch(this.state.playerPos)
     this.Game();
   }
-  //iterates through the 2d array and runs a function on each cell
+  //iterates through the 2D array and runs a function on each cell
   eachCell = (grid, fn) => grid.forEach(row=>row.forEach(cell=>fn(cell, grid)));
-
   newLevel = () => {
-    this.dungeonLevel += 1;
-    let pPos = this.curLevel[this.state.playerPos[1]][this.state.playerPos[0]].pos;
-    let arr = generate({GRID_HEIGHT,GRID_WIDTH}, this.dungeonLevel+1, pPos)
-    let curArr = this.curLevel;
+    this.curFloor += 1;
+    console.log('playerPos' , this.state.playerPos)
+    console.log(this.curGrid)
+
+    // let pPos = {this.curGrid[this.state.playerPos.y][this.state.playerPos.x].pos};
+    
+
+    let arr = generate({GRID_HEIGHT,GRID_WIDTH}, this.curFloor+1, this.state.playerPos)
+    let curArr = this.curGrid;
     Enemies(arr);
     Items(arr);
-    if(this.dungeonLevel < 2){
+    if(this.curFloor < 2){
       Portal(arr);
     }
     else{
       Boss(arr);
     }
-    Weapons(arr,this.dungeonLevel+1)
+    Weapons(arr,this.curFloor+1)
 
     curArr.map(function(row,i){
       return row.map(function(cell,l){
         return Object.assign(cell,arr[i][l])
       })
     })
-    this.curLevel = curArr;
+    this.curGrid = curArr;
   }
-  Game = () => {//this listens for player input and moves based on keypress
+
+  //this listens for player input and moves based on keypress and ends game if player dies
+  Game = () => {
     document.body.addEventListener('keydown', (e) => {
 
       if(this.playerXp > 39){
@@ -114,132 +120,168 @@ class Controller extends Component {
       }
     })
   }
-  newMove = key => { // mapping keypress to direction
-    let newDir = [this.state.playerPos[1],this.state.playerPos[0]];
+  // mapping keypress to direction
+  newMove = key => {
+    let newDir = [this.state.playerPos.x,this.state.playerPos.y];
     let moveInfo = (dirMap) => dirMap.key === key;
 
     let dirMap = [
-      {key:"ArrowDown",nextPos:[newDir[1]+1,newDir[0]]},
-      {key:"ArrowUp",nextPos:[newDir[1]-1,newDir[0]]},
-      {key:"ArrowLeft",nextPos:[newDir[1],newDir[0]-1]},
-      {key:"ArrowRight",nextPos:[newDir[1],newDir[0]+1]},
-      {key:"s",nextPos:[newDir[1]+1,newDir[0]]},
-      {key:"w",nextPos:[newDir[1]-1,newDir[0]]},
-      {key:"a",nextPos:[newDir[1],newDir[0]-1]},
-      {key:"d",nextPos:[newDir[1],newDir[0]+1]}
+      {
+        key:"ArrowDown",
+        nextPos:{
+          x:newDir[0],
+          y:newDir[1]+1
+        }
+      },//[newDir[1]+1,newDir[0]]},
+      {
+        key:"ArrowUp",
+        nextPos:{
+          x:newDir[0],
+          y:newDir[1]-1
+        }
+      },//[newDir[1]-1,newDir[0]]},
+      {key:"ArrowLeft",nextPos:{x:newDir[0]-1,y:newDir[1]}},//[newDir[1],newDir[0]-1]},
+      {key:"ArrowRight",nextPos:{x:newDir[0]+1,y:newDir[1]}},//[newDir[1],newDir[0]+1]},
+      {key:"s",nextPos:{x:newDir[0],y:newDir[1]+1}},//[newDir[1]+1,newDir[0]]},
+      {key:"w",nextPos:{x:newDir[0],y:newDir[1]-1}},//[newDir[1]-1,newDir[0]]},
+      {key:"a",nextPos:{x:newDir[0]-1,y:newDir[1]}},//[newDir[1],newDir[0]-1]},
+      {key:"d",nextPos:{x:newDir[0]+1,y:newDir[1]}},//[newDir[1],newDir[0]+1]}
     ];
 
     return dirMap.find(moveInfo);
   }
 
-  movePlayer = dir => { //controls player movement
-    if(this.isWithinGrid(dir.nextPos) && !this.isCollide(dir.nextPos)){
+  attack = nextPos => {
+    let nextCell = this.curGrid[nextPos.y][nextPos.x]
+    let attackRoll = Math.floor(Math.random() * 10) + 1;
+    let levelMod = parseFloat((this.playerLevel * 5).toFixed(2));
+    let hit = this.weapon.attackPower+attackRoll + levelMod ;
+    console.log(`\t\t   enemy health: ${nextCell.health}
+      enemy hit for: ${nextCell.attack}
+      your health:  ${this.state.playerHealth}
+      you hit for: ${hit}`)
+
+      this.m1 = `enemy health: ${nextCell.health}`;
+      this.m2 = `enemy hit for:  ${nextCell.attack}`;
+      this.m3 =   `you hit for: ${hit}` ;
+      if(nextCell.health > this.weapon.attackPower){
+        nextCell.health -= hit
+        this.setState({playerHealth:this.state.playerHealth - nextCell.attack});
+      }
+      else{
+        nextCell.defeated = true;
+        console.log('you beat this enemy!')
+        this.m1 = 'you beat this enemy!'
+        this.playerXp += nextCell.xp;
+        console.log(this.playerXp, nextCell.xp)
+        this.m2 = "You've gained " + nextCell.xp + "xp!"
+
+      }
+      // this.forceUpdate();
+    }
+  //controls player movement
+  movePlayer = dir => {
+    //collision detection
+    if(this.isWithinGrid(dir.nextPos) && !this.isWall(dir.nextPos)){
       if(this.isEnemy(dir.nextPos)){
         //attack!!!!
         this.attack(dir.nextPos)
       }
       else{
-        if(this.curLevel[dir.nextPos[0]][dir.nextPos[1]].type === 'portal'){
+        if(this.curGrid[dir.nextPos.y][dir.nextPos.x].type === 'portal'){
           this.newLevel()
         }
         if(this.isItem(dir.nextPos)){
           console.log('Picked Up health pack!')
-          this.m1 = 'Picked Up health pack! \n +' + this.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth+'hp!' ;
+          this.m1 = 'Picked Up health pack! \n +' + this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth+'hp!' ;
           this.m2 = ''
           this.m3 = ''
 
-          //this.playerHealth += this.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth;
-          this.setState({playerHealth:this.state.playerHealth + this.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth})
-          console.log(this.state.playerHealth, this.curLevel[dir.nextPos[0]][dir.nextPos[1]].addHealth)
+          //this.playerHealth += this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth;
+          this.setState({playerHealth:this.state.playerHealth + this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth})
+          console.log(this.state.playerHealth, this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth)
         }
-        if(this.curLevel[dir.nextPos[0]][dir.nextPos[1]].type === 'weapon'){
-          console.log('Picked up ' +  this.curLevel[dir.nextPos[0]][dir.nextPos[1]].name + "!")
-          this.m1 = 'Picked up ' +  this.curLevel[dir.nextPos[0]][dir.nextPos[1]].name + "!"
-          this.weapon = this.curLevel[dir.nextPos[0]][dir.nextPos[1]]
+        if(this.curGrid[dir.nextPos.y][dir.nextPos.x].type === 'weapon'){
+          console.log('Picked up ' +  this.curGrid[dir.nextPos.y][dir.nextPos.x].name + "!")
+          this.m1 = 'Picked up ' +  this.curGrid[dir.nextPos.y][dir.nextPos.x].name + "!"
+          this.weapon = this.curGrid[dir.nextPos.y][dir.nextPos.x]
 
         }
+        
         this.cleanPlayerCell()
+        this.moveTorch(this.state.playerPos)
+        this.curGrid[dir.nextPos.y][dir.nextPos.x].type = 'player';
 
-        this.curLevel[dir.nextPos[0]][dir.nextPos[1]] = {type:'player'}
-        // moveTorch(this.state.playerPos)
+        // console.log('dir.NextPos: ',dir.nextPos)
+        // console.log('playerPos: ',this.state.playerPos)
         this.setState({playerPos:dir.nextPos})
       }
     }
   }
-  cleanPlayerCell = () => { //cleans up after player
-    this.eachCell(this.curLevel,(cell) => {
+
+
+
+  //cleans up after player
+  cleanPlayerCell = () => {
+    this.eachCell(this.curGrid,(cell) => {
       if(cell.type === 'player'){
         return cell.type = 'floor'
       }
     })
   }
   moveTorch = pos => {
-    this.curLevel.map(function(row, y){
-      return row.map(function(cell,x){
-        return (this.isNear([y,x]) ? cell.hidden = false && console.log(y + " " + x) : cell.hidden = true)
-      })
+    this.eachCell(this.curGrid, (cell) =>{
+      if(this.isNear([cell.pos.x,cell.pos.y])){
+        cell.hidden = false;
+      }
+      else{
+        cell.hidden = true;
+      }
     })
   }
   isNear = pos => {
     let num = 5;
-    return pos[0] - this.playerPos[0] < num && pos[1] - this.playerPos[1] < num && this.playerPos[0] - pos[0] < num && this.playerPos[1] - pos[1] < num ;
+    return pos[0] - this.state.playerPos.x < num &&
+    pos[1] - this.state.playerPos.y < num &&
+    this.state.playerPos.x - pos[0] < num &&
+    this.state.playerPos.y - pos[1] < num ;
   }
-
   isEnemy = nextPos => { //does the next position contain an enemy?
-    if(this.curLevel[nextPos[0]][nextPos[1]].type === 'boss' &&
-    !this.curLevel[nextPos[0]][nextPos[1]].defeated){
+    if(this.curGrid[nextPos.y][nextPos.x].type === 'boss' &&
+    !this.curGrid[nextPos.y][nextPos.x].defeated){
       return true;
     }
-    if(this.curLevel[nextPos[0]][nextPos[1]].type === 'enemy' &&
-    !this.curLevel[nextPos[0]][nextPos[1]].defeated){
+    if(this.curGrid[nextPos.y][nextPos.x].type === 'enemy' &&
+    !this.curGrid[nextPos.y][nextPos.x].defeated){
       return true;
     }
   }
   //does the next position contain an item?
-  isItem = nextPos => this.curLevel[nextPos[0]][nextPos[1]].type === '^';
+  isItem = nextPos => this.curGrid[nextPos.y][nextPos.x].type === 'health';
   // is the next position a wall?
-  isCollide = nextPos => this.curLevel[nextPos[0]][nextPos[1]].type === 'wall';
-  isWithinGrid = nextPos => { // is the next position within the GRID?
-    return nextPos[0] >= 0 &&
-           nextPos[0] < GRID_HEIGHT &&
-           nextPos[1] >= 0 &&
-           nextPos[1] < GRID_WIDTH;
+  isWall = nextPos => this.curGrid[nextPos.y][nextPos.x].type === 'wall';
+  // is the next position within the GRID?
+  isWithinGrid = pos => {
+    return pos.y >= 0 &&
+    pos.y < GRID_HEIGHT &&
+    pos.x >= 0 &&
+    pos.x < GRID_WIDTH;
   }
-  attack = nextPos => {
-    let nextCell = this.curLevel[nextPos[0]][nextPos[1]]
-    let attackRoll = Math.floor(Math.random() * 10) + 1;
-    let levelMod = parseFloat((this.playerLevel * 5).toFixed(2));
-    let hit = this.weapon.attackPower+attackRoll + levelMod ;
-    console.log(`\t\t   enemy health: ${nextCell.health}
-                 enemy hit for: ${nextCell.attack}
-                 your health:  ${this.state.playerHealth}
-                 you hit for: ${hit}`)
+  //does this cell have floor cells around it? can the player go around the object
+  hasFloorAround = pos => {
+    // return true for now
+    return true;
+  }
 
-    this.m1 = `enemy health: ${nextCell.health}`;
-    this.m2 = `enemy hit for:  ${nextCell.attack}`;
-    this.m3 =   `you hit for: ${hit}` ;
-    if(nextCell.health > this.weapon.attackPower){
-      nextCell.health -= hit
-      this.setState({playerHealth:this.state.playerHealth - nextCell.attack});
-    }
-    else{
-      nextCell.defeated = true;
-      console.log('you beat this enemy!')
-      this.m1 = 'you beat this enemy!'
-      this.playerXp += nextCell.xp;
-      console.log(this.playerXp, nextCell.xp)
-      this.m2 = "You've gained " + nextCell.xp + "xp!"
-
-    }
-    // this.forceUpdate();
+  placer = (obj, freq, arr, blocker) => {
   }
 
   render() {
-    // console.log('playerPos: ' , this.playerPos)
+
     let dungeon =
     <div id="game">
     <CombatLog  m1={this.m1} m2={this.m2} m3={this.m3} />
-      <Grid height={GRID_HEIGHT} width={GRID_WIDTH} level={this.curLevel}/>
+      <Grid height={GRID_HEIGHT} width={GRID_WIDTH} level={this.curGrid}/>
       <div className='combatLog dungeonKey'>
         <ul>
           <li>
@@ -280,7 +322,7 @@ class Controller extends Component {
 
     let gameOver = <h1> YOU DIED <p>GAMEOVER</p>  </h1>
     let board = (this.state.playerHealth > 0 ? dungeon : gameOver)
-    // console.log('render', this.moveCount)
+
     let isWin = (this.playerXp > 700 ? console.log('You Win') : board)
     let win = <h1> YOU WON!!!  </h1>
     let tip = <ToolTip moveCount = {this.moveCount} />
@@ -295,7 +337,7 @@ class Controller extends Component {
             playerXp = {this.playerXp}
             playerHealth = {this.state.playerHealth}
             attackPower = {this.attackPower}
-            dungeonLevel = {this.dungeonLevel}
+            dungeonLevel = {this.curFloor}
             weapon = {this.weapon}
             />
         </div>

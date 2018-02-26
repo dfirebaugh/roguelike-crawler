@@ -1,82 +1,14 @@
 /*
 *    Generates a random Dungeon map -- returns it as an array
+*    Basically, this generates a new 2D array of walls and floors
+*    Player Position gets passed in so that the player should be able to navigate through the array
 */
-let populateGrid = (size, obj) => {
-  let arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
-  Array.apply(null, Array(size.GRID_WIDTH)).map((currX, x) => obj.init({x,y})
-  ));
-  return arr;
-}
-
-// let placePlayer = (pos, grid) => {
-//   console.log(pos)
-//   console.log('is this running?')
-//   console.log('should be player: ', grid[pos.y][pos.x])
-//   return grid[pos.x][pos.y].type = 'player'
-// };
-
-let newDirection = (curPos) => {
-  //possible directions
-  let possible = [
-    [-1,0],[0,-1],
-    [1,0],[0,1]
-  ];
-  // roll a d4
-  let direction = possible[Math.floor(Math.random()*possible.length)];
-  // console.log(direction+curPos)
-  let newDir = curPos.map((n,i)=>n+direction[i])
-  return newDir;
-}
-
-// increment in every direction and determine which direction has the closest wall
-// let findNearestWall = (curPos, grid) => {
-//   let nextPos = curPos;
-//   let count = 1;
-//   let increment =+ curPos[0]+count;
-//
-//   // console.log('inc: ', nextPos[0] + increment)
-//   console.log('grid: ' , grid[curPos[0]][curPos[1]])
-//
-//   // while (isWithinGrid(nextPos) || isWall(nexPos)){
-//   //
-//   // }
-//   return nextPos
-// }
-//
-
-let isWithinGrid = (pos, size) => {
-  return pos[0] < size.GRID_HEIGHT &&
-         pos[1] < size.GRID_WIDTH &&
-        pos[0] >= 0 &&
-        pos[1] >= 0;
-}
-
-// //iterates through the 2d array and runs a function on each cell
-// let eachCell = (grid, fn) => grid.forEach(row=>row.forEach(cell=>fn(cell, grid)));
-// let isPlayer = cell => cell.show == "@";
-// let isWall = (pos, grid) => {
-//   return grid[pos[0]][pos[1]].type === 'wall';
-// }
-
-let countFloor = (grid) => {
-  let count = 0;
-  grid.forEach((row) => {
-    row.forEach((cell) => {
-      if (cell.show === ''){
-        count++;
-      }
-    })
-  })
-
-  return count;
-}
-
 // take in height and width and generate a new level
 let generate = (size, level, playerPos) => {
   const Cell = {
     init(pos) {
       const newCell = Object.create(this);
-      newCell.type = 'wall';
+      newCell.type = "wall";
       newCell.hidden = true;
       newCell.pos = {
         x: pos.x,
@@ -85,62 +17,106 @@ let generate = (size, level, playerPos) => {
 
       return newCell;
     }
-  }
+  };
 
   let Grid = populateGrid(size, Cell);
-  // (!playerPos ? '' : playerPos = {x:0,y:16})
-  console.log("playerPos: ", playerPos);
-  // console.log('level: ', level);
-
-
-  return agent(Grid,size, playerPos);
-}
-
+  return agent(Grid, size, playerPos);
+};
 
 //agent will move around the grid one cell at a time to dig out a path/cavern
 let agent = (grid,size, playerPos) => {
-  let count = 0;
   let curPos = playerPos
-  let nextPos;
-  if(count === 0){
-    curPos = [playerPos.x, playerPos.y];
-  }
-  // placePlayer(playerPos, grid);
-  // console.log('wall: ', findNearestWall(curPos, grid))
+
+  console.log('curPos: ', curPos);
 
   let dig = (pos, grid) => {
-    grid[pos[0]][pos[1]].show = '';
-    grid[pos[0]][pos[1]].type = 'floor';
+    grid[pos.y][pos.x].type = 'floor';
   }
 
-  console.log('curPos',curPos)
+  dig(curPos, grid)
 
   // recursion to loop through grid
-  let digLoop = () => {
-    nextPos = newDirection(curPos)
-    let goodDir = isWithinGrid(nextPos, size)
+  let digLoop = (pos) => {
+    let nextPos = newDirection(pos);
 
-    if(!goodDir){
-      //TODO: get smarter about changing direction so there's less recursion
-      nextPos = [curPos[0]-1][curPos[1]-1];
-      digLoop()
+    if(countFloor(grid) > Math.round(size.GRID_WIDTH * size.GRID_HEIGHT / 3)){
+      return;
     }
-    dig(nextPos, grid)
-    curPos = nextPos
-    if(countFloor(grid) < Math.round(size.GRID_WIDTH * size.GRID_HEIGHT / 3)/1){
-      // if(count < 50){
-      return digLoop();
+    else{
+      if(!isWithinGrid(nextPos, size)){
+        //TODO: get smarter about changing direction so there's less recursion
+        nextPos = {x:curPos.x - 1 , y:curPos.y - 1}
+      }
+      else{
+        dig(nextPos, grid)
+      }
+      digLoop(nextPos)
     }
-    return;
+
   }
 
-  digLoop()
-
-  console.log('Floor count: ', countFloor(grid))
+  digLoop(curPos)
 
   return grid
 }
 
+let populateGrid = (size, obj) => {
+  let arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
+    Array.apply(null, Array(size.GRID_WIDTH)).map((currX, x) =>
+      obj.init({ x, y })
+    )
+  );
+  return arr;
+};
+
+let newDirection = (curPos, size) => {
+  //possible directions
+  let possible = [-1, 0, 1];
+  //possible axis x or y
+  let axis = [0, 1];
+  //roll a d2
+  let randAxis = axis[Math.floor(Math.random() * axis.length)];
+
+  // roll a d3
+  let randDir = possible[Math.floor(Math.random() * possible.length)];
+
+  // add or subtract from one direction or another direction
+  let newDir = [
+    {
+      x: curPos.x,
+      y: curPos.y + randDir
+    },
+    {
+      x: curPos.x + randDir,
+      y: curPos.y
+    }
+  ];
+
+  return newDir[randAxis];
+};
+
+let isWithinGrid = (pos, size) => {
+  return (
+    pos.y < size.GRID_HEIGHT &&
+    pos.x < size.GRID_WIDTH &&
+    pos.y >= 0 &&
+    pos.x >= 0
+  );
+};
+
+
+let countFloor = grid => {
+  let count = 0;
+  grid.forEach(row => {
+    row.forEach(cell => {
+      if (cell.type === "floor") {
+        count++;
+      }
+    });
+  });
+
+  return count;
+};
 
 
 export default generate;
