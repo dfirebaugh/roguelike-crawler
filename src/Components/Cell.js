@@ -14,12 +14,12 @@ class Cell extends React.Component{
       },
       {
         type:'enemy',
-        // show:'#'
-        show:<div className='enemy'></div>
+        // if you beat the enemy below 0 health remove the visual --- however, this should be done in the game controller.
+        show:(this.props.health <= 0 ? <div className='enemy'></div> : <div className='enemy'></div>)
       },
       {
         type:'boss',
-        show:<div className='boss'>:(</div>
+        show:<div className='boss'>>D</div>
       },
       {
         type:'weapon',

@@ -1,6 +1,6 @@
 function Boss(arr){
   let addBoss = function(){
-  let obj = {show:'B',name:'Boss',type:'boss',attack:50, health:250,xp:999};
+  let obj = {show:'B',name:'Boss',type:'enemy',attack:50, health:250,xp:999};
 
   let count = 0;
   arr.map(function(row, y){

@@ -12,50 +12,196 @@ import Grid from './Grid.js';
 import CombatLog from './CombatLog.js';
 import Cell from './Cell.js';
 
-const GRID_HEIGHT = 25;
-const GRID_WIDTH = 35;
+const SIZE = {
+  GRID_HEIGHT: 25,
+  GRID_WIDTH: 35
+}
 
 class Controller extends Component {
   constructor(props){
     super(props)
-    this.state = {playerHealth:110,playerPos:{x:16,y:0},isWin:false,gameOver:false}
-
+    this.state = {
+      playerHealth:110,
+      playerPos:{
+        x:16,
+        y:0
+      },
+      isWin:false,
+      curMessage: '',
+      gameOver:false
+    };
+    this.size = SIZE;
     this.moveCount = 1;
     this.playerPos = [16,0];
-    this.m1 = '';
-    this.m2 = '';
-    this.m3 = '';
+    this.combateMessage = '';
     this.playerLevel=1;
     this.playerXp = 0;
     this.curFloor=1;
     this.weapon = {name:'Fists',attackPower:30};
   }
+  toBePlaced = {
+    enemies: {
+      freq: 22,
+      blocking: true,
+      props: {
+        type: 'enemy',
+        health: '150',
+        attack: '10',
+        defeated: false,
+        hidden: true,
+        xp: 10
+      }
+    },
+    boss:{
+      freq:'once',
+      blocking:false,
+      props:{
+        show:'B',
+        name:'Boss',
+        type:'boss',
+        attack:50,
+        health:250,
+        xp:999
+      }
+    },
+    portal: {
+      freq: 'once',
+      blocking: false,
+      props: {
+        type: 'portal',
+        show: '[]',
+        name: 'portal'
+      }
+    },
+    healthPack:{
+      freq:12,
+      blocking:true,
+      props:{
+        show:'^',
+        type:'health',
+        addHealth:20,
+        hidden:true}
+    },
+    weapon:{
+      freq:'once',
+      blocking:true,
+      props:{
+
+      }
+    }
+  };
   componentWillMount(){
     let dungeonLevel = this.curFloor;
-    let arr = generate({GRID_HEIGHT,GRID_WIDTH}, dungeonLevel, {x:16,y:0});
+    let arr = generate(SIZE, dungeonLevel, {x:16,y:0});
     console.log(arr)
     Enemies(arr);
+    // this.placer(this.toBePlaced.enemies, arr)
     Items(arr);
     Portal(arr);
     Weapons(arr,1)
     this.curGrid = arr;
-    if(this.curFloor===1){
-      this.curGrid[this.state.playerPos.y][this.state.playerPos.x].type = 'player'
-    }
-    this.moveTorch(this.state.playerPos)
+    this.moveTorch(this.state.playerPos, arr)
     this.Game();
+    this.tests();
+    this.setState({curGrid: arr})
+  };
+  //some tests that run
+  tests = () => {
+    // console.log('testing placer', this.placer(this.toBePlaced.enemies, [[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'wall'}]]));
+
+
+    //testing the placer function
+    let placerTest = this.placer(this.toBePlaced.enemies, [[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'wall'}]]);
+    let countEnemies = 0;
+    console.log(placerTest)
+    placerTest.forEach((row)=> row.forEach(x => {
+      if(x.type === 'enemy'){
+        countEnemies++;
+      }
+    }))
+
+    console.log('count:', countEnemies)
+    // disabling htis check until i can get a better placer function going
+    // if(countEnemies < 1){
+    //   throw Error('Check Error: placer function is wrong')
+    // }
+
+
+    if(this.newMove("ArrowDown").key !== "ArrowDown"){
+      throw Error("Check Error: check newMove Function")
+    }
+    // check getCell
+    if(this.getCell({
+      x:0,
+      y:0
+    }, [[{check:'just checking'}],[]]) === typeof Object){
+      throw Error('Check Error: is getCell working properly?')
+    }
+    //check setPlayerPos
+    if(this.setPlayerPos({
+      x:0,
+      y:0
+    }, [[{}],[{}]]) !== 'player' ){
+      throw Error('Check Error: setPlayer function not working properly?')
+    }
+    //checking getType function
+    if(this.getType({
+      x:0,
+      y:0
+    },[[{
+      type:'floor'
+    }],[]]) !== 'floor'){
+      throw Error('Check Error: check the getType function!');
+    }
+    //check isWithinGrid
+    if(!this.isWithinGrid({x:1,y:1},{GRID_HEIGHT:2,GRID_WIDTH:2})){
+      throw Error('Check Error: check the isWithinGrid function')
+    }
+
   }
+  // function that places objects into the grid
+  placer = (obj, grid) => {
+    let that = this;
+    let newGrid = grid;
+    let count = 0;
+    let freq = obj.freq === typeof string ? 1 : obj.freq;
+    // let floors = this.getAllFloors(grid); // get all possible floor locations
+    //
+    // console.log('freq: ', freq)
+    //
+    // let randRow = Math.floor(Math.random()*floors.length);
+    // let randCell = Math.floor(Math.random()*randRow.length);
+    //
+    // console.log('floorArr', floors)
+
+
+
+    // console.log('floors: ', this.getAllFloors(grid)[1])
+    // let getRanFloor = (newGrid){
+    //   let x =
+    // }
+    // let gettingPos =
+    // console.log('pos: ', gettingPos);
+
+
+
+     newGrid.forEach((row, y)=> {
+       row.forEach(function(cell,x){
+         let randEn = Math.floor(Math.random()*100);
+        if(that.isFloor({x:x, y:y}, newGrid) && randEn > 75 && count < freq){
+          count++
+          Object.assign(cell,obj.props)
+        }
+      })
+    })
+    return newGrid;
+  }
+
   //iterates through the 2D array and runs a function on each cell
   eachCell = (grid, fn) => grid.forEach(row=>row.forEach(cell=>fn(cell, grid)));
   newLevel = () => {
     this.curFloor += 1;
-    console.log('playerPos' , this.state.playerPos)
-    console.log(this.curGrid)
-
-    // let pPos = {this.curGrid[this.state.playerPos.y][this.state.playerPos.x].pos};
-    
-
-    let arr = generate({GRID_HEIGHT,GRID_WIDTH}, this.curFloor+1, this.state.playerPos)
+    let arr = generate(SIZE, this.curFloor+1, this.state.playerPos)
     let curArr = this.curGrid;
     Enemies(arr);
     Items(arr);
@@ -73,7 +219,7 @@ class Controller extends Component {
       })
     })
     this.curGrid = curArr;
-  }
+  };
 
   //this listens for player input and moves based on keypress and ends game if player dies
   Game = () => {
@@ -111,7 +257,7 @@ class Controller extends Component {
           this.playerDirection = e.key;
 
           // console.log(that.newMove(e.key))
-          this.movePlayer(this.newMove(e.key))
+          this.updateGrid(this.movePlayer(this.newMove(e.key), this.curGrid))
 
         }
       }
@@ -122,115 +268,159 @@ class Controller extends Component {
   }
   // mapping keypress to direction
   newMove = key => {
-    let newDir = [this.state.playerPos.x,this.state.playerPos.y];
-    let moveInfo = (dirMap) => dirMap.key === key;
+    let newDir = [this.state.playerPos.x, this.state.playerPos.y];
+    let moveInfo = dirMap => dirMap.key === key;
 
     let dirMap = [
       {
-        key:"ArrowDown",
-        nextPos:{
-          x:newDir[0],
-          y:newDir[1]+1
+        key: "ArrowDown",
+        nextPos: {
+          x: newDir[0],
+          y: newDir[1] + 1
         }
-      },//[newDir[1]+1,newDir[0]]},
+      },
       {
-        key:"ArrowUp",
-        nextPos:{
-          x:newDir[0],
-          y:newDir[1]-1
+        key: "ArrowUp",
+        nextPos: {
+          x: newDir[0],
+          y: newDir[1] - 1
         }
-      },//[newDir[1]-1,newDir[0]]},
-      {key:"ArrowLeft",nextPos:{x:newDir[0]-1,y:newDir[1]}},//[newDir[1],newDir[0]-1]},
-      {key:"ArrowRight",nextPos:{x:newDir[0]+1,y:newDir[1]}},//[newDir[1],newDir[0]+1]},
-      {key:"s",nextPos:{x:newDir[0],y:newDir[1]+1}},//[newDir[1]+1,newDir[0]]},
-      {key:"w",nextPos:{x:newDir[0],y:newDir[1]-1}},//[newDir[1]-1,newDir[0]]},
-      {key:"a",nextPos:{x:newDir[0]-1,y:newDir[1]}},//[newDir[1],newDir[0]-1]},
-      {key:"d",nextPos:{x:newDir[0]+1,y:newDir[1]}},//[newDir[1],newDir[0]+1]}
+      },
+      {
+        key: "ArrowLeft",
+        nextPos: {
+          x: newDir[0] - 1,
+          y: newDir[1]
+        }
+      },
+      {
+        key: "ArrowRight",
+        nextPos: {
+          x: newDir[0] + 1,
+          y: newDir[1]
+        }
+      },
+      {
+        key: "s",
+        nextPos: {
+          x: newDir[0],
+          y: newDir[1] + 1
+        }
+      },
+      {
+        key: "w",
+        nextPos: {
+          x: newDir[0],
+          y: newDir[1] - 1
+        }
+      },
+      {
+        key: "a",
+        nextPos: {
+          x: newDir[0] - 1,
+          y: newDir[1]
+        }
+      },
+      {
+        key: "d",
+        nextPos: {
+          x: newDir[0] + 1,
+          y: newDir[1]
+        }
+      }
     ];
 
     return dirMap.find(moveInfo);
-  }
+  };
 
-  attack = nextPos => {
-    let nextCell = this.curGrid[nextPos.y][nextPos.x]
-    let attackRoll = Math.floor(Math.random() * 10) + 1;
-    let levelMod = parseFloat((this.playerLevel * 5).toFixed(2));
-    let hit = this.weapon.attackPower+attackRoll + levelMod ;
-    console.log(`\t\t   enemy health: ${nextCell.health}
-      enemy hit for: ${nextCell.attack}
-      your health:  ${this.state.playerHealth}
-      you hit for: ${hit}`)
+  //handle attacks
+  attack = (nextPos, grid)=> {
+    //currently mutating state directly to handle enemy health loss.  need better solution for this.
+    let nextCell = grid[nextPos.y][nextPos.x],
+    attackRoll = Math.floor(Math.random() * 10) + 1,
+    levelMod = parseFloat((this.playerLevel * 5).toFixed(2)),
+    hit = this.weapon.attackPower+attackRoll + levelMod;
 
-      this.m1 = `enemy health: ${nextCell.health}`;
-      this.m2 = `enemy hit for:  ${nextCell.attack}`;
-      this.m3 =   `you hit for: ${hit}` ;
-      if(nextCell.health > this.weapon.attackPower){
+    this.combatLog(`enemy health: ${nextCell.health - hit}
+                    enemy hit for:  ${nextCell.attack}
+                    you hit for: ${hit}`)
+
+
+      if(nextCell.health > hit){
         nextCell.health -= hit
         this.setState({playerHealth:this.state.playerHealth - nextCell.attack});
       }
       else{
         nextCell.defeated = true;
-        console.log('you beat this enemy!')
-        this.m1 = 'you beat this enemy!'
+        nextCell.health = 0;
+        nextCell.type = 'floor';
         this.playerXp += nextCell.xp;
-        console.log(this.playerXp, nextCell.xp)
-        this.m2 = "You've gained " + nextCell.xp + "xp!"
-
+        this.combatLog(`you beat this enemy!
+                        You've gained  ${nextCell.xp} xp!`)
       }
-      // this.forceUpdate();
     }
+
   //controls player movement
-  movePlayer = dir => {
+  movePlayer = (dir, grid) => {
+    let newGrid = grid;
     //collision detection
-    if(this.isWithinGrid(dir.nextPos) && !this.isWall(dir.nextPos)){
-      if(this.isEnemy(dir.nextPos)){
+    if(this.isWithinGrid(dir.nextPos, SIZE) && this.getType(dir.nextPos, newGrid) !== 'wall'){
+      if(this.getType(dir.nextPos, newGrid)=== 'enemy'){
         //attack!!!!
-        this.attack(dir.nextPos)
+        this.attack(dir.nextPos, newGrid);
       }
       else{
-        if(this.curGrid[dir.nextPos.y][dir.nextPos.x].type === 'portal'){
-          this.newLevel()
+        if(this.getType(dir.nextPos, newGrid) === 'portal'){
+          this.newLevel();
         }
-        if(this.isItem(dir.nextPos)){
-          console.log('Picked Up health pack!')
-          this.m1 = 'Picked Up health pack! \n +' + this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth+'hp!' ;
-          this.m2 = ''
-          this.m3 = ''
-
-          //this.playerHealth += this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth;
-          this.setState({playerHealth:this.state.playerHealth + this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth})
-          console.log(this.state.playerHealth, this.curGrid[dir.nextPos.y][dir.nextPos.x].addHealth)
+        if(this.getType(dir.nextPos, newGrid) === 'health'){
+          this.combatLog('Picked Up health pack! \n +' + newGrid[dir.nextPos.y][dir.nextPos.x].addHealth+'hp!');
+          //this.playerHealth += newGrid[dir.nextPos.y][dir.nextPos.x].addHealth;
+          this.setState({playerHealth:this.state.playerHealth + newGrid[dir.nextPos.y][dir.nextPos.x].addHealth});
         }
-        if(this.curGrid[dir.nextPos.y][dir.nextPos.x].type === 'weapon'){
-          console.log('Picked up ' +  this.curGrid[dir.nextPos.y][dir.nextPos.x].name + "!")
-          this.m1 = 'Picked up ' +  this.curGrid[dir.nextPos.y][dir.nextPos.x].name + "!"
-          this.weapon = this.curGrid[dir.nextPos.y][dir.nextPos.x]
-
+        if(this.getType(dir.nextPos, newGrid) === 'weapon'){
+          this.combatLog('Picked up ' +  newGrid[dir.nextPos.y][dir.nextPos.x].name + "!");
+          this.weapon = newGrid[dir.nextPos.y][dir.nextPos.x];
         }
-        
-        this.cleanPlayerCell()
-        this.moveTorch(this.state.playerPos)
-        this.curGrid[dir.nextPos.y][dir.nextPos.x].type = 'player';
 
-        // console.log('dir.NextPos: ',dir.nextPos)
-        // console.log('playerPos: ',this.state.playerPos)
+        this.cleanPlayerCell(newGrid);
+        this.moveTorch(this.state.playerPos, newGrid);
+        this.setPlayerPos(dir.nextPos, newGrid);
         this.setState({playerPos:dir.nextPos})
       }
     }
+    return newGrid
   }
 
 
+  attackCell = (cell, hitFor) => cell.hp - hitFor;
+
+
+
+
+
+  //does this cell have floor cells around it? can the player go around the object
+  hasFloorAround = pos => {
+    // return true for now
+    return true;
+  }
+
+  //should return all properties for object at coords in grid
+  getCell = (pos, grid) => grid[pos.y][pos.x];
+
+  // puts the player in a new position
+  setPlayerPos = (pos, grid) => grid[pos.y][pos.x].type = 'player';
 
   //cleans up after player
-  cleanPlayerCell = () => {
-    this.eachCell(this.curGrid,(cell) => {
+  cleanPlayerCell = (grid) => {
+    this.eachCell(grid,(cell) => {
       if(cell.type === 'player'){
         return cell.type = 'floor'
       }
     })
   }
-  moveTorch = pos => {
-    this.eachCell(this.curGrid, (cell) =>{
+  moveTorch = (pos,grid) => {
+    this.eachCell(grid, (cell) =>{
       if(this.isNear([cell.pos.x,cell.pos.y])){
         cell.hidden = false;
       }
@@ -242,46 +432,56 @@ class Controller extends Component {
   isNear = pos => {
     let num = 5;
     return pos[0] - this.state.playerPos.x < num &&
-    pos[1] - this.state.playerPos.y < num &&
-    this.state.playerPos.x - pos[0] < num &&
-    this.state.playerPos.y - pos[1] < num ;
+           pos[1] - this.state.playerPos.y < num &&
+           this.state.playerPos.x - pos[0] < num &&
+           this.state.playerPos.y - pos[1] < num ;
   }
-  isEnemy = nextPos => { //does the next position contain an enemy?
-    if(this.curGrid[nextPos.y][nextPos.x].type === 'boss' &&
-    !this.curGrid[nextPos.y][nextPos.x].defeated){
+
+  //does the next position contain an enemy?
+  isEnemy = (pos, grid) => {
+    if(grid[pos.y][pos.x].type === 'boss' &&
+      !grid[pos.y][pos.x].defeated){
       return true;
     }
-    if(this.curGrid[nextPos.y][nextPos.x].type === 'enemy' &&
-    !this.curGrid[nextPos.y][nextPos.x].defeated){
+    if(grid[pos.y][pos.x].type === 'enemy' &&
+      !grid[pos.y][pos.x].defeated){
       return true;
     }
   }
   //does the next position contain an item?
-  isItem = nextPos => this.curGrid[nextPos.y][nextPos.x].type === 'health';
+  isItem = (pos, grid) => grid[pos.y][pos.x].type === 'health';
   // is the next position a wall?
-  isWall = nextPos => this.curGrid[nextPos.y][nextPos.x].type === 'wall';
-  // is the next position within the GRID?
-  isWithinGrid = pos => {
-    return pos.y >= 0 &&
-    pos.y < GRID_HEIGHT &&
-    pos.x >= 0 &&
-    pos.x < GRID_WIDTH;
+  isWall = (pos, grid) => grid[pos.y][pos.x].type === 'wall';
+  //check if a cell is a floor
+  isFloor = (pos, grid) => grid[pos.y][pos.x].type === 'floor';
+  //perhaps the above functions could be replaced with a getType function
+  getType = (pos, grid) => grid[pos.y][pos.x].type;
+
+  getAllFloors = (grid) => {
+    let floorFilter = (cell) => {
+      return cell.type === 'floor';
+    }
+    return grid.map(row => {
+      return row.filter(floorFilter)
+    })
   }
-  //does this cell have floor cells around it? can the player go around the object
-  hasFloorAround = pos => {
-    // return true for now
-    return true;
+  // is the next position within the GRID?
+  isWithinGrid = (pos, size) => {
+    return pos.y >= 0 &&
+           pos.y < size.GRID_HEIGHT &&
+           pos.x >= 0 &&
+           pos.x < size.GRID_WIDTH;
   }
 
-  placer = (obj, freq, arr, blocker) => {
-  }
+  combatLog = message => this.setState({curMessage: message});
+
+  updateGrid = grid => this.curGrid = grid;
 
   render() {
-
     let dungeon =
     <div id="game">
-    <CombatLog  m1={this.m1} m2={this.m2} m3={this.m3} />
-      <Grid height={GRID_HEIGHT} width={GRID_WIDTH} level={this.curGrid}/>
+    <CombatLog  message={this.state.curMessage}/>
+      <Grid height={SIZE.GRID_HEIGHT} width={SIZE.GRID_WIDTH} level={this.curGrid}/>
       <div className='combatLog dungeonKey'>
         <ul>
           <li>

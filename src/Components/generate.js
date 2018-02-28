@@ -18,7 +18,7 @@ let generate = (size, level, playerPos) => {
       return newCell;
     }
   };
-
+  
   let Grid = populateGrid(size, Cell);
   return agent(Grid, size, playerPos);
 };
@@ -31,9 +31,13 @@ let agent = (grid,size, playerPos) => {
 
   let dig = (pos, grid) => {
     grid[pos.y][pos.x].type = 'floor';
+  };
+  let placePlayer = (playerPos) => {
+    grid[playerPos.y][playerPos.x].type = 'player';
   }
 
-  dig(curPos, grid)
+
+  dig(curPos, grid);
 
   // recursion to loop through grid
   let digLoop = (pos) => {
@@ -52,10 +56,10 @@ let agent = (grid,size, playerPos) => {
       }
       digLoop(nextPos)
     }
+  };
 
-  }
-
-  digLoop(curPos)
+  digLoop(curPos);
+  placePlayer(playerPos);
 
   return grid
 }

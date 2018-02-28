@@ -124,6 +124,7 @@
 }
 .floor{
   background:#515644;
+  border:1px solid black;
   height:16px;
   width:16px;
 }
