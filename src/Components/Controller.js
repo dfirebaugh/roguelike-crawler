@@ -328,7 +328,7 @@ class Controller extends Component {
     let nextCell = grid[nextPos.y][nextPos.x],
     attackRoll = Math.floor(Math.random() * 10) + 1,
     levelMod = parseFloat((this.playerLevel * 5).toFixed(2)),
-    hit = this.weapon.attackPower+attackRoll + levelMod;
+    hit = this.weapon.attackPower + attackRoll + levelMod;
 
     console.log('attackRoll: ', attackRoll)
     if(attackRoll >= 9){
@@ -673,7 +673,7 @@ class Controller extends Component {
           <StatusBox playerLevel = {this.playerLevel}
             playerXp = {this.playerXp}
             playerHealth = {this.state.playerHealth}
-            attackPower = {this.attackPower}
+            attackPower = {this.weapon.attackPower + parseFloat((this.playerLevel * 5).toFixed(2))}
             dungeonLevel = {this.curFloor}
             weapon = {this.weapon}
             />
