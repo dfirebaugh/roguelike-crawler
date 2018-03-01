@@ -21,11 +21,11 @@ class Grid  extends React.Component{
   }
   render(){
     return (
-			<div className="container text-center">
+      <div className="container text-center">
         <div style={gridStyle}>
-					{this.cellComponents(this.props.level)}
-				</div>
-     </div>
+          {this.cellComponents(this.props.level)}
+        </div>
+      </div>
 		);
 	}
 }
