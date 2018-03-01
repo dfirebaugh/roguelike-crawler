@@ -2,12 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import StatusBox from './StatusBox.js';
 import ToolTip from './ToolTip.js';
-import Weapons from './Weapons.js';
 import generate from './generate.js';
-import Enemies from './Enemies.js';
-import Items from './Items.js';
-import Portal from './Portal.js';
-import Boss from './Boss.js';
 import Grid from './Grid.js';
 import CombatLog from './CombatLog.js';
 import Cell from './Cell.js';
@@ -34,184 +29,106 @@ class Controller extends Component {
     this.moveCount = 1;
     this.playerPos = [16,0];
     this.combateMessage = '';
-    this.playerLevel=1;
+    this.playerLevel= 1;
+
     this.playerXp = 0;
-    this.curFloor=1;
+    this.curFloor= 1;
     this.weapon = {name:'Fists',attackPower:30};
   }
   toBePlaced = {
     enemies: {
-      freq: 22,
+      freq: .01,
       blocking: true,
+      name:'enemies',
       props: {
         type: 'enemy',
-        health: '150',
-        attack: '10',
+        health: 200,
+        attack: 10,
         defeated: false,
-        hidden: true,
+        hidden: false,
         xp: 10
       }
     },
     boss:{
       freq:'once',
       blocking:false,
+      name:'Boss',
       props:{
-        show:'B',
-        name:'Boss',
         type:'boss',
         attack:50,
-        health:250,
-        xp:999
+        health:450,
+        xp:9999,
+        hidden: false
       }
     },
     portal: {
       freq: 'once',
       blocking: false,
+      name:'portal',
       props: {
         type: 'portal',
-        show: '[]',
-        name: 'portal'
+        name: 'portal',
+        hidden: false
       }
     },
     healthPack:{
-      freq:12,
+      freq:.01,
       blocking:true,
+      name:'health',
       props:{
-        show:'^',
         type:'health',
-        addHealth:20,
-        hidden:true}
+        addHealth:15,
+        hidden:false
+      }
     },
     weapon:{
       freq:'once',
       blocking:true,
-      props:{
-
-      }
+      name:'weapon',
+      weapons:[
+        {type:'weapon',show:'W',name:'Fists',attackPower:30},
+        {type:'weapon',show:'s',name:'sword',level:1,attackPower:60},
+        {type:'weapon',show:'+',name:'magic sword+1',level:2,attackPower:70},
+        {type:'weapon',show:'++',name:'magic sword+2',level:3,attackPower:150},
+        {type:'weapon',show:'++',name:'sword of destiny',level:3,attackPower:250}
+      ]
     }
-  };
+};
   componentWillMount(){
     let dungeonLevel = this.curFloor;
     let arr = generate(SIZE, dungeonLevel, {x:16,y:0});
-    console.log(arr)
-    Enemies(arr);
-    // this.placer(this.toBePlaced.enemies, arr)
-    Items(arr);
-    Portal(arr);
-    Weapons(arr,1)
     this.curGrid = arr;
-    this.moveTorch(this.state.playerPos, arr)
+
+    this.placer(this.toBePlaced.enemies, arr, SIZE);
+    this.placer(this.toBePlaced.portal, arr, SIZE);
+    this.placer(this.toBePlaced.healthPack, arr, SIZE);
+    this.placer(this.toBePlaced.weapon, arr, SIZE);
+
     this.Game();
     this.tests();
+    this.moveTorch(this.state.playerPos, arr)
+
     this.setState({curGrid: arr})
   };
-  //some tests that run
-  tests = () => {
-    // console.log('testing placer', this.placer(this.toBePlaced.enemies, [[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'wall'}]]));
 
-
-    //testing the placer function
-    let placerTest = this.placer(this.toBePlaced.enemies, [[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'floor'}],[{type:'wall'}]]);
-    let countEnemies = 0;
-    console.log(placerTest)
-    placerTest.forEach((row)=> row.forEach(x => {
-      if(x.type === 'enemy'){
-        countEnemies++;
-      }
-    }))
-
-    console.log('count:', countEnemies)
-    // disabling htis check until i can get a better placer function going
-    // if(countEnemies < 1){
-    //   throw Error('Check Error: placer function is wrong')
-    // }
-
-
-    if(this.newMove("ArrowDown").key !== "ArrowDown"){
-      throw Error("Check Error: check newMove Function")
-    }
-    // check getCell
-    if(this.getCell({
-      x:0,
-      y:0
-    }, [[{check:'just checking'}],[]]) === typeof Object){
-      throw Error('Check Error: is getCell working properly?')
-    }
-    //check setPlayerPos
-    if(this.setPlayerPos({
-      x:0,
-      y:0
-    }, [[{}],[{}]]) !== 'player' ){
-      throw Error('Check Error: setPlayer function not working properly?')
-    }
-    //checking getType function
-    if(this.getType({
-      x:0,
-      y:0
-    },[[{
-      type:'floor'
-    }],[]]) !== 'floor'){
-      throw Error('Check Error: check the getType function!');
-    }
-    //check isWithinGrid
-    if(!this.isWithinGrid({x:1,y:1},{GRID_HEIGHT:2,GRID_WIDTH:2})){
-      throw Error('Check Error: check the isWithinGrid function')
-    }
-
-  }
-  // function that places objects into the grid
-  placer = (obj, grid) => {
-    let that = this;
-    let newGrid = grid;
-    let count = 0;
-    let freq = obj.freq === typeof string ? 1 : obj.freq;
-    // let floors = this.getAllFloors(grid); // get all possible floor locations
-    //
-    // console.log('freq: ', freq)
-    //
-    // let randRow = Math.floor(Math.random()*floors.length);
-    // let randCell = Math.floor(Math.random()*randRow.length);
-    //
-    // console.log('floorArr', floors)
-
-
-
-    // console.log('floors: ', this.getAllFloors(grid)[1])
-    // let getRanFloor = (newGrid){
-    //   let x =
-    // }
-    // let gettingPos =
-    // console.log('pos: ', gettingPos);
-
-
-
-     newGrid.forEach((row, y)=> {
-       row.forEach(function(cell,x){
-         let randEn = Math.floor(Math.random()*100);
-        if(that.isFloor({x:x, y:y}, newGrid) && randEn > 75 && count < freq){
-          count++
-          Object.assign(cell,obj.props)
-        }
-      })
-    })
-    return newGrid;
-  }
-
-  //iterates through the 2D array and runs a function on each cell
-  eachCell = (grid, fn) => grid.forEach(row=>row.forEach(cell=>fn(cell, grid)));
+  //instantiates grid for new level and populates it accordingly
   newLevel = () => {
     this.curFloor += 1;
     let arr = generate(SIZE, this.curFloor+1, this.state.playerPos)
     let curArr = this.curGrid;
-    Enemies(arr);
-    Items(arr);
-    if(this.curFloor < 2){
-      Portal(arr);
+    this.placer(this.toBePlaced.enemies, arr, SIZE);
+    this.placer(this.toBePlaced.healthPack, arr, SIZE);
+    this.placer(this.toBePlaced.weapon, arr, SIZE);
+
+    if(this.curFloor < 4){
+      // Portal(arr);
+      this.placer(this.toBePlaced.portal, arr, SIZE);
     }
     else{
-      Boss(arr);
+      this.placer(this.toBePlaced.boss, arr, SIZE);
+      // Boss(arr);
     }
-    Weapons(arr,this.curFloor+1)
+    // Weapons(arr,this.curFloor+1)
 
     curArr.map(function(row,i){
       return row.map(function(cell,l){
@@ -220,6 +137,63 @@ class Controller extends Component {
     })
     this.curGrid = curArr;
   };
+
+  // function that places objects into the grid -- should only place on available spots (i.e. floor cells)
+  placer = (obj, grid, size) => {
+    // takes an object and places it on the grid at a defined frequency
+    let newGrid = grid;
+    let count = 0;
+    let freq = obj.freq === 'once' ? .01 : obj.freq;
+    let floors = this.getAllFloors(grid); // get all possible floor locations
+    let blocking = obj.blocking
+    let cellObj = obj.name === 'weapon' ? obj.weapons[this.curFloor] : obj.props;
+
+    //places item into grid until it reaches previously set freq
+    let placeItem = (item) => {
+      let randCell = Math.floor(Math.random()*floors.length);
+      let cellPos = floors[randCell].pos;
+      count++;
+
+      //TODO: check randCell to see if it blocking --
+      //      i.e. if a obj is placed there, will it block a pathway?
+      // if cell should not be blocking, get another random cell.
+      if(!blocking){
+        // console.log('isBlocking: ',this.isBlocking(floors[randCell].pos, grid, size))
+        // console.log('blocking: ', blocking)
+        //TODO: add if condition to see if this randcell is blocking
+      }
+      else{
+      }
+
+      if(this.getType(cellPos,grid) === 'floor'){
+        if(cellPos !== this.state.playerPos)
+        this.replaceObj(item, cellPos,grid)
+      }
+
+      if(count >= size.GRID_WIDTH * size.GRID_HEIGHT * freq)
+      {
+        return;
+      }
+
+      if(obj.freq === 'once'){
+        return;
+      }
+      else{
+        placeItem(item);
+      }
+    }
+
+    placeItem(cellObj);
+    console.log(obj.name,count)
+
+
+    return newGrid;
+
+  }
+
+  //iterates through the 2D array and runs a function on each cell
+  eachCell = (grid, fn) => grid.forEach(row=>row.forEach(cell=>fn(cell, grid)));
+
 
   //this listens for player input and moves based on keypress and ends game if player dies
   Game = () => {
@@ -239,6 +213,21 @@ class Controller extends Component {
       }
       if(this.playerXp > 249){
         this.playerLevel = 5
+      }
+      if(this.playerXp > 349){
+        this.playerLevel = 6
+      }
+      if(this.playerXp > 449){
+        this.playerLevel = 7
+      }
+      if(this.playerXp > 549){
+        this.playerLevel = 8
+      }
+      if(this.playerXp > 649){
+        this.playerLevel = 9
+      }
+      if(this.playerXp > 749){
+        this.playerLevel = 10
       }
       if(this.state.playerHealth > 0){
         if(
@@ -341,31 +330,68 @@ class Controller extends Component {
     levelMod = parseFloat((this.playerLevel * 5).toFixed(2)),
     hit = this.weapon.attackPower+attackRoll + levelMod;
 
-    this.combatLog(`enemy health: ${nextCell.health - hit}
-                    enemy hit for:  ${nextCell.attack}
-                    you hit for: ${hit}`)
+    console.log('attackRoll: ', attackRoll)
+    if(attackRoll >= 9){
+      this.combatLog(`Critical Hit!!!
+                      you hit for: ${hit * 2}!!
+                      enemy health is now: ${nextCell.health - hit * 2}
+                      enemy hit for:  ${nextCell.attack}
+                      `)
 
-
-      if(nextCell.health > hit){
-        nextCell.health -= hit
-        this.setState({playerHealth:this.state.playerHealth - nextCell.attack});
+      if(nextCell.health > hit * 2){
+        nextCell.health -= hit * 2
+        //if you crit, the enemy doesn't get a hit in on you
+        // this.setState({playerHealth:this.state.playerHealth - nextCell.attack});
       }
       else{
         nextCell.defeated = true;
         nextCell.health = 0;
         nextCell.type = 'floor';
         this.playerXp += nextCell.xp;
-        this.combatLog(`you beat this enemy!
+        this.combatLog(`Critical Hit!!!
+                        you hit for ${hit * 2}
+                        you beat this enemy!
                         You've gained  ${nextCell.xp} xp!`)
-      }
+        }
     }
+    else{
+      this.setState({playerHealth:this.state.playerHealth - nextCell.attack});
+      if(attackRoll > 4){
+        this.combatLog(`you hit for: ${hit}
+                        enemy health is now: ${nextCell.health - hit}
+                        enemy hit for:  ${nextCell.attack}
+          `)
+
+          if(nextCell.health > hit){
+            nextCell.health -= hit
+          }
+          else{
+            nextCell.defeated = true;
+            nextCell.health = 0;
+            nextCell.type = 'floor';
+            this.playerXp += nextCell.xp;
+            this.combatLog(`you hit for: ${hit}
+                            you beat this enemy!
+                            You've gained  ${nextCell.xp} xp!`)
+            }
+          }
+          else{
+            this.combatLog(`YOU MISSED!!!!
+                            enemy hit for:  ${nextCell.attack}
+              `);
+
+          }
+        }
+      }
 
   //controls player movement
   movePlayer = (dir, grid) => {
     let newGrid = grid;
     //collision detection
-    if(this.isWithinGrid(dir.nextPos, SIZE) && this.getType(dir.nextPos, newGrid) !== 'wall'){
-      if(this.getType(dir.nextPos, newGrid)=== 'enemy'){
+    if(this.isWithinGrid(dir.nextPos, SIZE) &&
+       this.getType(dir.nextPos, newGrid) !== 'wall'){
+      if(this.getType(dir.nextPos, newGrid)=== 'enemy' ||
+         this.getType(dir.nextPos, newGrid) === 'boss'){
         //attack!!!!
         this.attack(dir.nextPos, newGrid);
       }
@@ -381,6 +407,7 @@ class Controller extends Component {
         if(this.getType(dir.nextPos, newGrid) === 'weapon'){
           this.combatLog('Picked up ' +  newGrid[dir.nextPos.y][dir.nextPos.x].name + "!");
           this.weapon = newGrid[dir.nextPos.y][dir.nextPos.x];
+          this.weapon.attackPower = newGrid[dir.nextPos.y][dir.nextPos.x].attackPower;
         }
 
         this.cleanPlayerCell(newGrid);
@@ -391,13 +418,6 @@ class Controller extends Component {
     }
     return newGrid
   }
-
-
-  attackCell = (cell, hitFor) => cell.hp - hitFor;
-
-
-
-
 
   //does this cell have floor cells around it? can the player go around the object
   hasFloorAround = pos => {
@@ -419,9 +439,10 @@ class Controller extends Component {
       }
     })
   }
+
   moveTorch = (pos,grid) => {
     this.eachCell(grid, (cell) =>{
-      if(this.isNear([cell.pos.x,cell.pos.y])){
+      if(this.isNear({x:cell.pos.x,y:cell.pos.y})){
         cell.hidden = false;
       }
       else{
@@ -429,41 +450,69 @@ class Controller extends Component {
       }
     })
   }
+
   isNear = pos => {
     let num = 5;
-    return pos[0] - this.state.playerPos.x < num &&
-           pos[1] - this.state.playerPos.y < num &&
-           this.state.playerPos.x - pos[0] < num &&
-           this.state.playerPos.y - pos[1] < num ;
+    return pos.x - this.state.playerPos.x < num &&
+           pos.y - this.state.playerPos.y < num &&
+           this.state.playerPos.x - pos.x < num &&
+           this.state.playerPos.y - pos.y < num ;
   }
 
-  //does the next position contain an enemy?
-  isEnemy = (pos, grid) => {
-    if(grid[pos.y][pos.x].type === 'boss' &&
-      !grid[pos.y][pos.x].defeated){
-      return true;
-    }
-    if(grid[pos.y][pos.x].type === 'enemy' &&
-      !grid[pos.y][pos.x].defeated){
-      return true;
-    }
-  }
-  //does the next position contain an item?
-  isItem = (pos, grid) => grid[pos.y][pos.x].type === 'health';
-  // is the next position a wall?
-  isWall = (pos, grid) => grid[pos.y][pos.x].type === 'wall';
-  //check if a cell is a floor
-  isFloor = (pos, grid) => grid[pos.y][pos.x].type === 'floor';
-  //perhaps the above functions could be replaced with a getType function
   getType = (pos, grid) => grid[pos.y][pos.x].type;
 
+  combatLog = message => this.setState({curMessage: message});
+
+  updateGrid = grid => this.curGrid = grid;
+
+  replaceObj = (obj, pos, grid) => Object.assign(grid[pos.y][pos.x],obj);
+
+  isBlocking = (pos, grid, size) => {
+    let possible  = [-1, 0, 1];
+    let blockFlag = 0;
+
+    possible.forEach(x => {
+      if(this.isWithinGrid({x:pos.x+x, y:pos.y},size)){
+        if(grid[pos.y][pos.x+x].type === 'wall'){
+          blockFlag = 1;
+        }
+      }
+    })
+
+    possible.forEach(y => {
+      if(this.isWithinGrid({x:pos.x, y:pos.y+y},size)){
+        if(grid[pos.y+y][pos.x].type === 'wall'){
+          blockFlag = 1;
+        }
+      }
+    })
+
+    return blockFlag === 1;
+  }
+
+  //get all floor cells from the grid and flatten to a 1 dimensional array
   getAllFloors = (grid) => {
+    let floors = []
     let floorFilter = (cell) => {
       return cell.type === 'floor';
     }
-    return grid.map(row => {
+    let newGrid = grid.map(row => {
       return row.filter(floorFilter)
     })
+
+    return floors.concat.apply([], newGrid)
+  }
+
+  countItem = (type, grid) => {
+    let items = []
+    let itemFilter = (cell) => {
+      return cell.type === type;
+    }
+    let newGrid = grid.map(row => {
+      return row.filter(itemFilter)
+    })
+
+    return items.concat.apply([], newGrid).length
   }
   // is the next position within the GRID?
   isWithinGrid = (pos, size) => {
@@ -473,9 +522,97 @@ class Controller extends Component {
            pos.x < size.GRID_WIDTH;
   }
 
-  combatLog = message => this.setState({curMessage: message});
+  //populates grid with specified objects
+  populateGrid = (size, obj) => {
+    let arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
+    Array.apply(null, Array(size.GRID_WIDTH)).map((currX, x) =>
+    obj.init({ x, y })
+      )
+    );
+    return arr;
+  };
 
-  updateGrid = grid => this.curGrid = grid;
+  //some tests that run
+  tests = () => {
+    const testSize = {
+      GRID_HEIGHT: 3,
+      GRID_WIDTH: 3
+    }
+    const testObj = {
+      init(pos) {
+        const newCell = Object.create(this);
+        newCell.type = "floor";
+        newCell.hidden = true;
+        newCell.pos = {
+          x: pos.x,
+          y: pos.y
+        };
+
+        return newCell;
+      }
+    };
+    let tinyArr = this.populateGrid(testSize, testObj )
+
+    //check for populateGrid
+    if(tinyArr[0][0].type !== 'floor'){
+      throw Error('Check Error: populateGrid not working correctly')
+    }
+
+    //check for getAllFloors
+    let floors = this.getAllFloors(tinyArr);
+    if(floors[0].type !== 'floor' ||
+    floors[floors.length - 1].type !== 'floor'){
+      throw Error('Check Error: getAllFloors not working correctly');
+    }
+
+    //check for replaceObj
+    this.replaceObj({type:'wall'}, {x:0,y:1}, tinyArr)
+    if(tinyArr[1][0].type !== 'wall'){
+      throw Error('Check Error: replaceObj not working correctly')
+    }
+
+    //checking placer
+    this.placer(this.toBePlaced.enemies, tinyArr, testSize);
+    this.placer(this.toBePlaced.boss, tinyArr, testSize);
+    this.placer(this.toBePlaced.portal, tinyArr, testSize);
+    this.placer(this.toBePlaced.healthPack, tinyArr, testSize);
+    if(this.countItem(this.toBePlaced.enemies.props.type, tinyArr) < this.toBePlaced.enemies.freq){
+      throw Error('Check Error: should be placing more enemies')
+    }
+
+    //checking newMove
+    if(this.newMove("ArrowDown").key !== "ArrowDown"){
+      throw Error("Check Error: check newMove Function")
+    }
+    // check getCell
+    if(this.getCell({
+      x:0,
+      y:0
+    }, [[{check:'just checking'}],[]]) === typeof Object){
+      throw Error('Check Error: is getCell working properly?')
+    }
+    //check setPlayerPos
+    if(this.setPlayerPos({
+      x:0,
+      y:0
+    }, tinyArr) !== 'player' ){
+      throw Error('Check Error: setPlayer function not working properly?')
+    }
+    //checking getType function
+    if(this.getType({
+      x:0,
+      y:0
+    },[[{
+      type:'floor'
+    }],[]]) !== 'floor'){
+      throw Error('Check Error: check the getType function!');
+    }
+    //check isWithinGrid
+    if(!this.isWithinGrid({x:1,y:1},{GRID_HEIGHT:2,GRID_WIDTH:2})){
+      throw Error('Check Error: check the isWithinGrid function')
+    }
+
+  }
 
   render() {
     let dungeon =
@@ -523,7 +660,7 @@ class Controller extends Component {
     let gameOver = <h1> YOU DIED <p>GAMEOVER</p>  </h1>
     let board = (this.state.playerHealth > 0 ? dungeon : gameOver)
 
-    let isWin = (this.playerXp > 700 ? console.log('You Win') : board)
+    let isWin = (this.playerXp > 3000 ? console.log('You Win') : board)
     let win = <h1> YOU WON!!!  </h1>
     let tip = <ToolTip moveCount = {this.moveCount} />
 
@@ -541,11 +678,12 @@ class Controller extends Component {
             weapon = {this.weapon}
             />
         </div>
-        {(this.playerXp > 700 ? win : "")}
+        {(this.playerXp > 3000 ? win : "")}
         {(this.moveCount === 0 ? tip : isWin)}
       </div>
     );
   }
 }
+
 
 export default Controller;

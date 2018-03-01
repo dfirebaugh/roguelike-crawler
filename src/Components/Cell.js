@@ -65,7 +65,5 @@ const cellStyle = {
   float: "left",
   background: "#333"
 }
-// (this.props.hidden ? '' : this.props.show)
-// (this.props.hidden ? '': this.getGraphic(this.props.type))
 
 export default Cell;

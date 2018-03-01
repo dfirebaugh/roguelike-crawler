@@ -18,16 +18,14 @@ let generate = (size, level, playerPos) => {
       return newCell;
     }
   };
-  
+
   let Grid = populateGrid(size, Cell);
   return agent(Grid, size, playerPos);
 };
 
 //agent will move around the grid one cell at a time to dig out a path/cavern
 let agent = (grid,size, playerPos) => {
-  let curPos = playerPos
-
-  console.log('curPos: ', curPos);
+  let curPos = playerPos;
 
   let dig = (pos, grid) => {
     grid[pos.y][pos.x].type = 'floor';
@@ -64,14 +62,6 @@ let agent = (grid,size, playerPos) => {
   return grid
 }
 
-let populateGrid = (size, obj) => {
-  let arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
-    Array.apply(null, Array(size.GRID_WIDTH)).map((currX, x) =>
-      obj.init({ x, y })
-    )
-  );
-  return arr;
-};
 
 let newDirection = (curPos, size) => {
   //possible directions
@@ -99,6 +89,9 @@ let newDirection = (curPos, size) => {
   return newDir[randAxis];
 };
 
+
+
+
 let isWithinGrid = (pos, size) => {
   return (
     pos.y < size.GRID_HEIGHT &&
@@ -108,6 +101,14 @@ let isWithinGrid = (pos, size) => {
   );
 };
 
+let populateGrid = (size, obj) => {
+  let arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
+  Array.apply(null, Array(size.GRID_WIDTH)).map((currX, x) =>
+  obj.init({ x, y })
+)
+);
+return arr;
+};
 
 let countFloor = grid => {
   let count = 0;
