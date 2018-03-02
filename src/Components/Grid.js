@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Cell from './Cell.js';
 
 
-class Grid  extends React.Component{
+class Grid extends Component{
   cellComponents = (grid) => {
     let cells = grid.map((currRow,i)=>{
       let row = currRow.map((currCell, j) => {
@@ -21,8 +21,8 @@ class Grid  extends React.Component{
   }
   render(){
     return (
-      <div className="container text-center">
-        <div style={gridStyle}>
+      <div className="container gameBox text-center">
+        <div>
           {this.cellComponents(this.props.level)}
         </div>
       </div>
@@ -31,16 +31,6 @@ class Grid  extends React.Component{
 }
 
 // component styles
-const gridStyle = {
-  position:'relative',
-  display:'inline-block',
-  margin:'0 auto',
-  // border:'4px solid red',
-  marginTop: 30,
-  WebKitBoxShadow: "0 0 5px rgba(0, 0, 0, 1)",
-  MozBoxShadow: "0 0 5px rgba(0, 0, 0, 1)",
-  boxShadow: "0 0 5px rgba(0, 0, 0, 1)"
-};
 const rowStyle = {
   display:'flex',
   float:'left',

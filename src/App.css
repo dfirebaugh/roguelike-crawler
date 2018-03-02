@@ -59,11 +59,15 @@
 
 .combatLog{
   background:black;
-  width:30%;
+  width:45%;
   /*height:100%;*/
 }
 #game{
   display:flex;
+  background:black;
+}
+.gameBox{
+  border:1px solid red;
 }
 
 .image-for-cell{

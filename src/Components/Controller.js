@@ -4,6 +4,7 @@ import StatusBox from './StatusBox.js';
 import ToolTip from './ToolTip.js';
 import generate from './generate.js';
 import Grid from './Grid.js';
+import CanvasGrid from './CanvasGrid.js';
 import CombatLog from './CombatLog.js';
 import Cell from './Cell.js';
 
@@ -23,7 +24,8 @@ class Controller extends Component {
       },
       isWin:false,
       curMessage: '',
-      gameOver:false
+      gameOver:false,
+      useCanvas:true
     };
     this.size = SIZE;
     this.moveCount = 1;
@@ -34,6 +36,7 @@ class Controller extends Component {
     this.playerXp = 0;
     this.curFloor= 1;
     this.weapon = {name:'Fists',attackPower:30};
+    this.handleRenderToggle = this.handleRenderToggle.bind(this);
   }
   toBePlaced = {
     enemies: {
@@ -614,47 +617,58 @@ class Controller extends Component {
 
   }
 
+  //toggle between rendering with the dom and rendering with Canvas
+  handleRenderToggle(e){
+    this.setState({useCanvas:!this.state.useCanvas})
+  }
   render() {
+    let useCanvas = (this.state.useCanvas ? <CanvasGrid size={SIZE} level={this.curGrid} />  : <Grid height={SIZE.GRID_HEIGHT} width={SIZE.GRID_WIDTH} level={this.curGrid}/> )
     let dungeon =
-    <div id="game">
-    <CombatLog  message={this.state.curMessage}/>
-      <Grid height={SIZE.GRID_HEIGHT} width={SIZE.GRID_WIDTH} level={this.curGrid}/>
-      <div className='combatLog dungeonKey'>
-        <ul>
-          <li>
-            <Cell type='player'></Cell>
-            player
-          </li>
-          <li>
-            <Cell type='health'></Cell>
-            health
-          </li>
-          <li>
-            <Cell type='enemy'></Cell>
-            enemy
-          </li>
-          <li>
-            <Cell type='weapon'></Cell>
-            weapon
-          </li>
-          <li>
-            <Cell type='boss'></Cell>
-            boss
-          </li>
-          <li>
-            <Cell type='portal'></Cell>
-            portal
-          </li>
-          <li>
-            <Cell type='floor'></Cell>
-            floor
-          </li>
-          <li>
-            <Cell type='wall'></Cell>
-            wall
-          </li>
-        </ul>
+    <div>
+      <div id="game">
+        <CombatLog  message={this.state.curMessage}/>
+        {useCanvas}
+        <div className='combatLog dungeonKey'>
+          <ul>
+            <li>
+              <Cell type='player'></Cell>
+              player
+            </li>
+            <li>
+              <Cell type='health'></Cell>
+              health
+            </li>
+            <li>
+              <Cell type='enemy'></Cell>
+              enemy
+            </li>
+            <li>
+              <Cell type='weapon'></Cell>
+              weapon
+            </li>
+            <li>
+              <Cell type='boss'></Cell>
+              boss
+            </li>
+            <li>
+              <Cell type='portal'></Cell>
+              portal
+            </li>
+            <li>
+              <Cell type='floor'></Cell>
+              floor
+            </li>
+            <li>
+              <Cell type='wall'></Cell>
+              wall
+            </li>
+          </ul>
+        </div>
       </div>
+      <p>{this.state.useCanvas ? 'Currently rendering with Canvas' : 'Currently rendering with DOM' }</p>
+      <button onClick={this.handleRenderToggle}>
+        {this.state.useCanvas ? 'Switch DOM Rendering' : 'Switch to Canvas' }
+      </button>
     </div>
 
     let gameOver = <h1> YOU DIED <p>GAMEOVER</p>  </h1>
@@ -680,6 +694,7 @@ class Controller extends Component {
         </div>
         {(this.playerXp > 3000 ? win : "")}
         {(this.moveCount === 0 ? tip : isWin)}
+
       </div>
     );
   }
