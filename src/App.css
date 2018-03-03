@@ -146,3 +146,10 @@
   height:16px;
   width:16px;
 }
+
+.dungeonMap{
+  background:yellow;
+  border:1px solid black;
+  height:16px;
+  width:16px;
+}

@@ -9,8 +9,8 @@ import CombatLog from './CombatLog.js';
 import Cell from './Cell.js';
 
 const SIZE = {
-  GRID_HEIGHT: 25,
-  GRID_WIDTH: 35
+  GRID_HEIGHT: 45,
+  GRID_WIDTH: 85
 }
 
 class Controller extends Component {
@@ -32,6 +32,7 @@ class Controller extends Component {
     this.playerPos = [16,0];
     this.combateMessage = '';
     this.playerLevel= 1;
+    this.hasDungeonMap = false;
 
     this.playerXp = 0;
     this.curFloor= 1;
@@ -59,11 +60,20 @@ class Controller extends Component {
       props:{
         type:'boss',
         attack:50,
-        health:450,
+        health:1450,
         xp:9999,
         hidden: false
       }
     },
+    dungeonMap:{
+          freq:'once',
+          blocking:false,
+          name:'Map',
+          props:{
+            type:'dungeonMap',
+            hidden: false
+          }
+        },
     portal: {
       freq: 'once',
       blocking: false,
@@ -106,6 +116,7 @@ class Controller extends Component {
     this.placer(this.toBePlaced.portal, arr, SIZE);
     this.placer(this.toBePlaced.healthPack, arr, SIZE);
     this.placer(this.toBePlaced.weapon, arr, SIZE);
+    this.placer(this.toBePlaced.dungeonMap, arr, SIZE);
 
     this.Game();
     this.tests();
@@ -117,11 +128,13 @@ class Controller extends Component {
   //instantiates grid for new level and populates it accordingly
   newLevel = () => {
     this.curFloor += 1;
+    this.hasDungeonMap = false;
     let arr = generate(SIZE, this.curFloor+1, this.state.playerPos)
     let curArr = this.curGrid;
     this.placer(this.toBePlaced.enemies, arr, SIZE);
     this.placer(this.toBePlaced.healthPack, arr, SIZE);
     this.placer(this.toBePlaced.weapon, arr, SIZE);
+    this.placer(this.toBePlaced.dungeonMap, arr, SIZE);
 
     if(this.curFloor < 4){
       // Portal(arr);
@@ -402,6 +415,10 @@ class Controller extends Component {
         if(this.getType(dir.nextPos, newGrid) === 'portal'){
           this.newLevel();
         }
+        if(this.getType(dir.nextPos, newGrid) === 'dungeonMap'){
+          this.unHideAll(newGrid)
+          this.combatLog('Picked up dungeon map!')
+        }
         if(this.getType(dir.nextPos, newGrid) === 'health'){
           this.combatLog('Picked Up health pack! \n +' + newGrid[dir.nextPos.y][dir.nextPos.x].addHealth+'hp!');
           //this.playerHealth += newGrid[dir.nextPos.y][dir.nextPos.x].addHealth;
@@ -428,6 +445,12 @@ class Controller extends Component {
     return true;
   }
 
+  //unhide all cells on this floor
+  unHideAll(grid){
+    this.eachCell(grid, (cell) => cell.hidden = false);
+    this.hasDungeonMap = true;
+    console.log('dungeonMap')
+  }
   //should return all properties for object at coords in grid
   getCell = (pos, grid) => grid[pos.y][pos.x];
 
@@ -449,10 +472,13 @@ class Controller extends Component {
         cell.hidden = false;
       }
       else{
-        cell.hidden = true;
+        if(this.hasDungeonMap === false){
+          cell.hidden = true;
+        }
       }
     })
   }
+
 
   isNear = pos => {
     let num = 5;
@@ -661,6 +687,10 @@ class Controller extends Component {
             <li>
               <Cell type='wall'></Cell>
               wall
+            </li>
+            <li>
+              <Cell type='dungeonMap'></Cell>
+              dungeon map
             </li>
           </ul>
         </div>

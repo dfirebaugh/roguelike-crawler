@@ -38,6 +38,10 @@ class Cell extends React.Component{
         show:<div className='health'></div>
       },
       {
+        type:'dungeonMap',
+        show:<div className='dungeonMap'></div>
+      },
+      {
         type:'hidden',
         show:<div className='hiddenCell'></div>
       }
