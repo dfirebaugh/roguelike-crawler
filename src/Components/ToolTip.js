@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Cell from './Cell.js';
 import '../App.css';
 
 
@@ -8,17 +9,20 @@ class ToolTip extends Component {
     return (
       <div className='ToolTip '>
         <h3 >Tip: You could probably use a weapon </h3>
+        <Cell type="health"></Cell>
+        <p>  Pickup health packs to increase your heatlh </p>
+        <Cell type="enemy"></Cell>
+        <p>  Fight enemies to gain experience </p>
+        <Cell type="portal"></Cell>
+        <p>  travel through portals to get to new levels</p>
+        <Cell type="boss"></Cell>
+        <p>   Fight the boss to win the game</p>
 
-        <p> <strong>^  </strong>Pickup health packs to increase your heatlh</p>
-        <p> <strong>#</strong> Fight enemies to gain experience </p>
-        <p> <strong>[]</strong> travel through portals to get to new levels</p>
-        <p> <strong>B</strong>  Fight the boss to win the game</p>
+        <Cell type="weapon"></Cell>
+        <p> There is a weapon on each dungeon floor.  Picking them up will help you defeat the boss</p>
 
-<h4> There is a weapon on each dungeon level.  Picking them up will help you defeat the boss</h4>
-        <p><strong>S</strong> sword</p>
-        <p><strong>+</strong> sword +1</p>
-        <p><strong>++</strong> magic sword +2</p>
-
+        <Cell type="dungeonMap"></Cell>
+        <p> Each floor has a dungeon map that will reveal the rest of the map</p>
 
 
 

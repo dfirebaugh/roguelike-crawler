@@ -32,7 +32,7 @@ class Controller extends Component {
     this.playerPos = [16,0];
     this.combateMessage = '';
     this.playerLevel= 1;
-    this.hasDungeonMap = false;
+    this.hasDungeonMap = true;
 
     this.playerXp = 0;
     this.curFloor= 1;
@@ -49,7 +49,7 @@ class Controller extends Component {
         health: 200,
         attack: 10,
         defeated: false,
-        hidden: false,
+        hidden: true,
         xp: 10
       }
     },
@@ -62,7 +62,7 @@ class Controller extends Component {
         attack:50,
         health:1450,
         xp:9999,
-        hidden: false
+        hidden: true
       }
     },
     dungeonMap:{
@@ -71,7 +71,7 @@ class Controller extends Component {
           name:'Map',
           props:{
             type:'dungeonMap',
-            hidden: false
+            hidden: true
           }
         },
     portal: {
@@ -81,7 +81,7 @@ class Controller extends Component {
       props: {
         type: 'portal',
         name: 'portal',
-        hidden: false
+        hidden: true
       }
     },
     healthPack:{
@@ -91,7 +91,7 @@ class Controller extends Component {
       props:{
         type:'health',
         addHealth:15,
-        hidden:false
+        hidden:true
       }
     },
     weapon:{
@@ -106,7 +106,7 @@ class Controller extends Component {
         {type:'weapon',show:'++',name:'sword of destiny',level:3,attackPower:250}
       ]
     }
-};
+  };
   componentWillMount(){
     let dungeonLevel = this.curFloor;
     let arr = generate(SIZE, dungeonLevel, {x:16,y:0});
@@ -125,10 +125,13 @@ class Controller extends Component {
     this.setState({curGrid: arr})
   };
 
+  componentDidMount(){
+    this.moveTorch(this.state.playerPos, this.state.curGrid)
+  }
   //instantiates grid for new level and populates it accordingly
   newLevel = () => {
     this.curFloor += 1;
-    this.hasDungeonMap = false;
+    this.hasDungeonMap = true;
     let arr = generate(SIZE, this.curFloor+1, this.state.playerPos)
     let curArr = this.curGrid;
     this.placer(this.toBePlaced.enemies, arr, SIZE);
@@ -209,7 +212,6 @@ class Controller extends Component {
 
   //iterates through the 2D array and runs a function on each cell
   eachCell = (grid, fn) => grid.forEach(row=>row.forEach(cell=>fn(cell, grid)));
-
 
   //this listens for player input and moves based on keypress and ends game if player dies
   Game = () => {
@@ -479,7 +481,6 @@ class Controller extends Component {
     })
   }
 
-
   isNear = pos => {
     let num = 5;
     return pos.x - this.state.playerPos.x < num &&
@@ -697,7 +698,7 @@ class Controller extends Component {
       </div>
       <p>{this.state.useCanvas ? 'Currently rendering with Canvas' : 'Currently rendering with DOM' }</p>
       <button onClick={this.handleRenderToggle}>
-        {this.state.useCanvas ? 'Switch DOM Rendering' : 'Switch to Canvas' }
+        {this.state.useCanvas ? 'Switch to DOM Rendering' : 'Switch to Canvas' }
       </button>
     </div>
 
@@ -723,7 +724,7 @@ class Controller extends Component {
             />
         </div>
         {(this.playerXp > 3000 ? win : "")}
-        {(this.moveCount === 0 ? tip : isWin)}
+        {(this.moveCount === 1 ? tip : isWin)}
 
       </div>
     );

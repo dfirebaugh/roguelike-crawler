@@ -30,7 +30,7 @@ class CanvasGrid extends Component{
     this.updateCanvas();
   }
   componentWillMount(){
-    this.tileSize = 16;
+    this.tileSize = 20;
     this.w = this.props.size.GRID_WIDTH * this.tileSize;
     this.h = this.props.size.GRID_HEIGHT * this.tileSize;
   }
@@ -57,12 +57,6 @@ class CanvasGrid extends Component{
     this.ctx.drawImage(
       img,
       pos.x * this.tileSize, pos.y * this.tileSize,
-      this.tileSize, this.tileSize
-    )
-  }
-  drawTile = (x,y) => {
-    this.ctx.fillRect(
-      x * this.tileSize, y * this.tileSize,
       this.tileSize, this.tileSize
     )
   }
