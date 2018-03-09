@@ -32,7 +32,7 @@ class Controller extends Component {
     this.playerPos = [16,0];
     this.combateMessage = '';
     this.playerLevel= 1;
-    this.hasDungeonMap = true;
+    this.hasDungeonMap = false;
 
     this.playerXp = 0;
     this.curFloor= 1;
@@ -131,7 +131,7 @@ class Controller extends Component {
   //instantiates grid for new level and populates it accordingly
   newLevel = () => {
     this.curFloor += 1;
-    this.hasDungeonMap = true;
+    this.hasDungeonMap = false;
     let arr = generate(SIZE, this.curFloor+1, this.state.playerPos)
     let curArr = this.curGrid;
     this.placer(this.toBePlaced.enemies, arr, SIZE);
