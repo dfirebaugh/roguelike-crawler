@@ -9,8 +9,8 @@ import CombatLog from './CombatLog.js';
 import Cell from './Cell.js';
 
 const SIZE = {
-  GRID_HEIGHT: 45,
-  GRID_WIDTH: 85
+  GRID_HEIGHT: 35,
+  GRID_WIDTH: 45
 }
 
 class Controller extends Component {
@@ -657,39 +657,39 @@ class Controller extends Component {
         <div className='combatLog dungeonKey'>
           <ul>
             <li>
-              <Cell type='player'></Cell>
+              <Cell row='key' col='key' type='player'></Cell>
               player
             </li>
             <li>
-              <Cell type='health'></Cell>
+              <Cell row='key' col='key' type='health'></Cell>
               health
             </li>
             <li>
-              <Cell type='enemy'></Cell>
+              <Cell row='key' col='key' type='enemy'></Cell>
               enemy
             </li>
             <li>
-              <Cell type='weapon'></Cell>
+              <Cell row='key' col='key' type='weapon'></Cell>
               weapon
             </li>
             <li>
-              <Cell type='boss'></Cell>
+              <Cell row='key' col='key' type='boss'></Cell>
               boss
             </li>
             <li>
-              <Cell type='portal'></Cell>
+              <Cell row='key' col='key'  type='portal'></Cell>
               portal
             </li>
             <li>
-              <Cell type='floor'></Cell>
+              <Cell row='key' col='key' type='floor'></Cell>
               floor
             </li>
             <li>
-              <Cell type='wall'></Cell>
+              <Cell row='key' col='key' type='wall'></Cell>
               wall
             </li>
             <li>
-              <Cell type='dungeonMap'></Cell>
+              <Cell  row='key' col='key' type='dungeonMap'></Cell>
               dungeon map
             </li>
           </ul>

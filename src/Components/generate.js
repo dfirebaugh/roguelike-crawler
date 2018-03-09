@@ -41,12 +41,17 @@ let agent = (grid,size, playerPos) => {
   let digLoop = (pos) => {
     let nextPos = newDirection(pos);
 
+
+
     if(countFloor(grid) > Math.round(size.GRID_WIDTH * size.GRID_HEIGHT / 3)){
       return;
     }
     else{
       if(!isWithinGrid(nextPos, size)){
         //TODO: get smarter about changing direction so there's less recursion
+        // currently, if nextPos is out of bounds, we just back up and to the left.
+        // This has a potential to fail.
+        // we need a find nearest wall function
         nextPos = {x:curPos.x - 1 , y:curPos.y - 1}
       }
       else{
@@ -61,7 +66,6 @@ let agent = (grid,size, playerPos) => {
 
   return grid
 }
-
 
 let newDirection = (curPos, size) => {
   //possible directions
