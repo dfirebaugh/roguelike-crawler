@@ -4,8 +4,8 @@
   "private": true,
   "homepage": "https://dfirebaugh.github.io/roguelike-crawler",
   "dependencies": {
-    "react": "^16.4.0",
-    "react-dom": "^16.4.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
     "react-scripts": "^1.1.4"
   },
   "scripts": {
@@ -16,6 +16,6 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "gh-pages": "^1.1.0"
+    "gh-pages": "^1.2.0"
   }
 }

@@ -26,8 +26,10 @@ const generate = (size, level, playerPos) => {
 //agent will move around the grid one cell at a time to dig out a path/cavern
 const agent = (grid,size, playerPos) => {
   const curPos = playerPos;
+  let digCount = 0;
 
   const dig = (pos, grid) => {
+    digCount++;
     grid[pos.y][pos.x].type = 'floor';
   };
   const placePlayer = (playerPos) => {
@@ -46,24 +48,24 @@ const agent = (grid,size, playerPos) => {
     }
     else{
       if(!isWithinGrid(nextPos, size)){
-        //TODO: get smarter about changing direction so there's less recursion
+        //TODO: get smarter about changing direction so there's less recursion -- reduce the digCount
 
         //Do another dig with the next position toward the center of the grid
         digLoop(moveTowardCenter(pos));
       }
       else{
-        dig(nextPos, grid)
+        dig(nextPos, grid);
+        digLoop(nextPos);
       }
 
       if(Math.floor(Math.random() * 10 ) <= 1 ){
-        console.log('split')
-        digLoop(nextPos)
+        digLoop(nextPos);
       }
 
     }
-    console.log("mainDig")
-    digLoop(nextPos)
+    
   };
+
 
   const moveTowardCenter = curPos => {
     const nextPos = {
@@ -76,6 +78,7 @@ const agent = (grid,size, playerPos) => {
 
   digLoop(curPos);
   placePlayer(playerPos);
+  console.log('digCount: ', digCount)
 
   return grid
 }
