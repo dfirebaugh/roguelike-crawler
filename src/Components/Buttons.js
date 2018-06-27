@@ -1,13 +1,5 @@
 import React from 'react';
 
-class Buttons extends React.Component{
-  render(){
-    return(
-      <div>
-        <div className='btn' id='btn'> button</div>
-      </div>
-    )
-  }
-}
+const Buttons = () => <div className='btn' id='btn'> button</div>
 
 export default Buttons;

@@ -4,7 +4,7 @@
 *    Player Position gets passed in so that the player should be able to navigate through the array
 */
 // take in height and width and generate a new level
-let generate = (size, level, playerPos) => {
+const generate = (size, level, playerPos) => {
   const Cell = {
     init(pos) {
       const newCell = Object.create(this);
@@ -19,18 +19,18 @@ let generate = (size, level, playerPos) => {
     }
   };
 
-  let Grid = populateGrid(size, Cell);
+  const Grid = populateGrid(size, Cell);
   return agent(Grid, size, playerPos);
 };
 
 //agent will move around the grid one cell at a time to dig out a path/cavern
-let agent = (grid,size, playerPos) => {
-  let curPos = playerPos;
+const agent = (grid,size, playerPos) => {
+  const curPos = playerPos;
 
-  let dig = (pos, grid) => {
+  const dig = (pos, grid) => {
     grid[pos.y][pos.x].type = 'floor';
   };
-  let placePlayer = (playerPos) => {
+  const placePlayer = (playerPos) => {
     grid[playerPos.y][playerPos.x].type = 'player';
   }
 
@@ -38,28 +38,41 @@ let agent = (grid,size, playerPos) => {
   dig(curPos, grid);
 
   // recursion to loop through grid
-  let digLoop = (pos) => {
-    let nextPos = newDirection(pos);
-
-
-
+  const digLoop = pos => {
+    const nextPos = newDirection(pos);
+    
     if(countFloor(grid) > Math.round(size.GRID_WIDTH * size.GRID_HEIGHT / 3)){
       return;
     }
     else{
       if(!isWithinGrid(nextPos, size)){
         //TODO: get smarter about changing direction so there's less recursion
-        // currently, if nextPos is out of bounds, we just back up and to the left.
-        // This has a potential to fail.
-        // we need a find nearest wall function
-        nextPos = {x:curPos.x - 1 , y:curPos.y - 1}
+
+        //Do another dig with the next position toward the center of the grid
+        digLoop(moveTowardCenter(pos));
       }
       else{
         dig(nextPos, grid)
       }
-      digLoop(nextPos)
+
+      if(Math.floor(Math.random() * 10 ) <= 1 ){
+        console.log('split')
+        digLoop(nextPos)
+      }
+
     }
+    console.log("mainDig")
+    digLoop(nextPos)
   };
+
+  const moveTowardCenter = curPos => {
+    const nextPos = {
+      x: curPos.x < size.GRID_WIDTH / 2 ? curPos.x + 1 : curPos.x - 1, 
+      y:  curPos.y < size.GRID_HEIGHT / 2 ? curPos.y + 1 : curPos.y - 1
+    };
+
+    return nextPos;
+  }
 
   digLoop(curPos);
   placePlayer(playerPos);
@@ -67,19 +80,19 @@ let agent = (grid,size, playerPos) => {
   return grid
 }
 
-let newDirection = (curPos, size) => {
+const newDirection = (curPos) => {
   //possible directions
-  let possible = [-1, 0, 1];
+  const possible = [-1, 0, 1];
   //possible axis x or y
-  let axis = [0, 1];
+  const axis = [0, 1];
   //roll a d2
-  let randAxis = axis[Math.floor(Math.random() * axis.length)];
+  const randAxis = axis[Math.floor(Math.random() * axis.length)];
 
   // roll a d3
-  let randDir = possible[Math.floor(Math.random() * possible.length)];
+  const randDir = possible[Math.floor(Math.random() * possible.length)];
 
   // add or subtract from one direction or another direction
-  let newDir = [
+  const newDir = [
     {
       x: curPos.x,
       y: curPos.y + randDir
@@ -96,7 +109,7 @@ let newDirection = (curPos, size) => {
 
 
 
-let isWithinGrid = (pos, size) => {
+const isWithinGrid = (pos, size) => {
   return (
     pos.y < size.GRID_HEIGHT &&
     pos.x < size.GRID_WIDTH &&
@@ -105,8 +118,8 @@ let isWithinGrid = (pos, size) => {
   );
 };
 
-let populateGrid = (size, obj) => {
-  let arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
+const populateGrid = (size, obj) => {
+  const arr = Array.apply(null, Array(size.GRID_HEIGHT)).map((currY, y) =>
   Array.apply(null, Array(size.GRID_WIDTH)).map((currX, x) =>
   obj.init({ x, y })
 )
@@ -114,7 +127,7 @@ let populateGrid = (size, obj) => {
 return arr;
 };
 
-let countFloor = grid => {
+const countFloor = grid => {
   let count = 0;
   grid.forEach(row => {
     row.forEach(cell => {

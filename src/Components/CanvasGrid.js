@@ -30,7 +30,7 @@ class CanvasGrid extends Component{
     this.updateCanvas();
   }
   componentWillMount(){
-    this.tileSize = 20;
+    this.tileSize = 11;
     this.w = this.props.size.GRID_WIDTH * this.tileSize;
     this.h = this.props.size.GRID_HEIGHT * this.tileSize;
   }
