@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Cell from './Cell.js';
 
-
-class Grid extends Component{
-  cellComponents = (grid) => {
+const Grid = () => {
+  const cellComponents = (grid) => {
     let cells = grid.map((currRow,i)=>{
       let row = currRow.map((currCell, j) => {
         return <Cell key={i + "," + j}
@@ -19,15 +18,11 @@ class Grid extends Component{
 
     return cells;
   }
-  render(){
-    return (
-      <div className="container gameBox text-center">
-        <div>
-          {this.cellComponents(this.props.level)}
+  return <div className="container gameBox text-center">
+          <div>
+            {cellComponents(this.props.level)}
+          </div>
         </div>
-      </div>
-		);
-	}
 }
 
 // component styles

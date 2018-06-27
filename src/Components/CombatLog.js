@@ -1,16 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import '../App.css';
 
 
 
-class CombatLog extends Component {
-  render() {
-    return (
+const CombatLog  = props => 
       <div className='combatLog'>
-          <p>{this.props.message}</p>
+          <p>{props.message}</p>
       </div>
-      );
-    }
-  }
 
   export default CombatLog;

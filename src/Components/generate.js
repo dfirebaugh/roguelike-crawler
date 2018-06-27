@@ -50,7 +50,7 @@ const agent = (grid,size, playerPos) => {
       if(!isWithinGrid(nextPos, size)){
         //TODO: get smarter about changing direction so there's less recursion -- reduce the digCount
 
-        //Do another dig with the next position toward the center of the grid
+        //Run digLoop with the next position toward the center of the grid
         digLoop(moveTowardCenter(pos));
       }
       else{
@@ -63,7 +63,6 @@ const agent = (grid,size, playerPos) => {
       }
 
     }
-    
   };
 
 

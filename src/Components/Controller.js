@@ -119,7 +119,7 @@ class Controller extends Component {
     this.placer(this.toBePlaced.dungeonMap, arr, SIZE);
 
     this.Game();
-    this.tests();
+    
     this.moveTorch(this.state.playerPos, arr)
 
     this.setState({curGrid: arr})
@@ -561,88 +561,6 @@ class Controller extends Component {
     );
     return arr;
   };
-
-  //some tests that run
-  tests = () => {
-    const testSize = {
-      GRID_HEIGHT: 3,
-      GRID_WIDTH: 3
-    }
-    const testObj = {
-      init(pos) {
-        const newCell = Object.create(this);
-        newCell.type = "floor";
-        newCell.hidden = true;
-        newCell.pos = {
-          x: pos.x,
-          y: pos.y
-        };
-
-        return newCell;
-      }
-    };
-    let tinyArr = this.populateGrid(testSize, testObj )
-
-    //check for populateGrid
-    if(tinyArr[0][0].type !== 'floor'){
-      throw Error('Check Error: populateGrid not working correctly')
-    }
-
-    //check for getAllFloors
-    let floors = this.getAllFloors(tinyArr);
-    if(floors[0].type !== 'floor' ||
-    floors[floors.length - 1].type !== 'floor'){
-      throw Error('Check Error: getAllFloors not working correctly');
-    }
-
-    //check for replaceObj
-    this.replaceObj({type:'wall'}, {x:0,y:1}, tinyArr)
-    if(tinyArr[1][0].type !== 'wall'){
-      throw Error('Check Error: replaceObj not working correctly')
-    }
-
-    //checking placer
-    this.placer(this.toBePlaced.enemies, tinyArr, testSize);
-    this.placer(this.toBePlaced.boss, tinyArr, testSize);
-    this.placer(this.toBePlaced.portal, tinyArr, testSize);
-    this.placer(this.toBePlaced.healthPack, tinyArr, testSize);
-    if(this.countItem(this.toBePlaced.enemies.props.type, tinyArr) < this.toBePlaced.enemies.freq){
-      throw Error('Check Error: should be placing more enemies')
-    }
-
-    //checking newMove
-    if(this.newMove("ArrowDown").key !== "ArrowDown"){
-      throw Error("Check Error: check newMove Function")
-    }
-    // check getCell
-    if(this.getCell({
-      x:0,
-      y:0
-    }, [[{check:'just checking'}],[]]) === typeof Object){
-      throw Error('Check Error: is getCell working properly?')
-    }
-    //check setPlayerPos
-    if(this.setPlayerPos({
-      x:0,
-      y:0
-    }, tinyArr) !== 'player' ){
-      throw Error('Check Error: setPlayer function not working properly?')
-    }
-    //checking getType function
-    if(this.getType({
-      x:0,
-      y:0
-    },[[{
-      type:'floor'
-    }],[]]) !== 'floor'){
-      throw Error('Check Error: check the getType function!');
-    }
-    //check isWithinGrid
-    if(!this.isWithinGrid({x:1,y:1},{GRID_HEIGHT:2,GRID_WIDTH:2})){
-      throw Error('Check Error: check the isWithinGrid function')
-    }
-
-  }
 
   //toggle between rendering with the dom and rendering with Canvas
   handleRenderToggle(e){
